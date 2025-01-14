@@ -7,8 +7,8 @@ ausgabe = eingaben[0] * gewichte[0] + eingaben[1] * gewichte[1] + bias
 #####
 
 eingaben = [1.2, 3.2]
-gewichte1 = [0.8, 1.3] # Gewichte zwischen des ersten Ausgabeneuron
-gewichte2 = [3.1, 1.6] # Gewichte zwischen des zweiten Ausgabeneuron
+gewichte1 = [0.8, 1.3]  # Gewichte zwischen des ersten Ausgabeneuron
+gewichte2 = [3.1, 1.6]  # Gewichte zwischen des zweiten Ausgabeneuron
 
 bias1 = 4
 bias2 = 3
@@ -52,39 +52,55 @@ ausgabe = np.dot(eingaben, transponierte_gewichte) + biases
 
 #####
 
+
 class Schicht:
-    def __init__(self, anzahl_eingaben, anzahl_neuronen): 
-        self.gewichte = np.random.rand(anzahl_eingaben, anzahl_neuronen)
-        self.biases = np.zeros((1, anzahl_neuronen))
-    def forward(self, eingaben):
-        self.ausgabe = np.dot(eingaben, self.gewichte) + self.biases
+    def __init__(selbst, anzahl_eingaben, anzahl_neuronen):
+        selbst.gewichte = np.random.rand(anzahl_eingaben, anzahl_neuronen)
+        selbst.bias = np.zeros((1, anzahl_neuronen))
+
+    def vorwärts(selbst, eingaben):
+        selbst.ausgaben = np.dot(eingaben, selbst.gewichte) + selbst.bias
+
 
 schicht1 = Schicht(3, 4)
 schicht2 = Schicht(4, 5)
 
-schicht1.forward(eingaben)
-schicht2.forward(schicht1.ausgabe)
-print(schicht2.ausgabe)
+schicht1.vorwärts(eingaben)
+schicht2.vorwärts(schicht1.ausgaben)
+print(schicht2.ausgaben)
 
 #####
+
 
 #
 ausgabe = 5
 #
+
 max(0, ausgabe)
+
 
 #####
 
-class ReLU:
-    def forward(self, eingaben):
-        self.ausgabe = np.maximum(0, eingaben)
+
+class Sigmoid:
+    def vorwärts(selbst, eingaben):
+        selbst.ausgaben = 1 / (1 + np.exp(-eingaben))
+
 
 schicht1 = Schicht(3, 4)
-aktivierung = ReLU()
+aktivierung1 = Sigmoid()
 
-schicht1.forward(eingaben)
-aktivierung.forward(schicht1.ausgabe)
-print(aktivierung.ausgabe)
+schicht1.vorwärts(eingaben)
+aktivierung1.vorwärts(schicht1.ausgaben)
+print(aktivierung1.ausgaben)
+
+#####
+
+
+class ReLU:
+    def vorwärts(selbst, eingaben):
+        selbst.ausgaben = np.maximum(0, eingaben)
+
 
 #####
 
@@ -97,9 +113,10 @@ import math
 exponierte_werte = []
 
 for ausgabe in ausgaben:
-    exponierte_werte.append(math.e ** ausgabe)
+    exponierte_werte.append(math.e**ausgabe)
 
 print(exponierte_werte)
+
 
 ######
 
@@ -110,3 +127,13 @@ for ausgabe in exponierte_werte:
     normalisierte_werte.append(ausgabe / normalisierte_basis)
 
 print(normalisierte_werte)
+
+
+######
+
+
+class SoftMax:
+    def vorwärts(selbst, eingaben):
+        exponierte_werte = np.exp(eingaben - np.max(eingaben, axis=1, keepdims=True))
+        normalisierte_basis = np.sum(exponierte_werte, axis=1, keepdims=True)
+        selbst.ausgaben = exponierte_werte / normalisierte_basis

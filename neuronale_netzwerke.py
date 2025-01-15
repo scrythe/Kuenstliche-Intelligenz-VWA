@@ -132,7 +132,7 @@ print(normalisierte_werte)
 ######
 
 
-class SoftMax:
+class Softmax:
     def vorwärts(selbst, eingaben):
         exponierte_werte = np.exp(eingaben - np.max(eingaben, axis=1, keepdims=True))
         normalisierte_basis = np.sum(exponierte_werte, axis=1, keepdims=True)

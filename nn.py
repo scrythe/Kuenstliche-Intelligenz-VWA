@@ -1,7 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import idx2numpy
-import gzip
 import lade_daten
 
 
@@ -16,8 +14,9 @@ class Schicht:
         selbst.ausgaben = np.dot(eingaben, selbst.gewichte) + selbst.bias
 
 
-def sigmoid(eingaben):
-    return 1 / (1 + np.exp(-eingaben))
+class Sigmoid:
+    def vorwärts(selbst, eingaben):
+        selbst.ausgaben= 1 / (1 + np.exp(-eingaben))
 
 
 class ReLU:
@@ -31,6 +30,11 @@ class Softmax:
         normalisierte_basis = np.sum(exponierte_werte, axis=1, keepdims=True)
         selbst.ausgaben = exponierte_werte / normalisierte_basis
 
+def Mean_Squared_Error(ausgaben, lösungen):
+    lösungen = np.eye(10)[lösungen]
+    losses = np.power(ausgaben-lösungen,2)
+    avg_loss = np.sum(losses)
+    return avg_loss
 
 def Categorical_Cross_Entropy(ausgaben, lösungen):
     ausgaben_clipped = np.clip(ausgaben, 1e-100, 1 - 1e-100)
@@ -50,12 +54,12 @@ class Netzwerk:
         selbst.versteckte_schicht = Schicht(
             anzahl_eingabe_neuronen, anzahl_versteckte_neuronen
         )
-        selbst.versteckte_aktivierung = ReLU()
+        selbst.versteckte_aktivierung = Sigmoid()
         selbst.ausgabe_schicht = Schicht(
             anzahl_versteckte_neuronen, anzahl_ausgabe_neuronen
         )
-        selbst.ausgabe_aktivierung = Softmax()
-        selbst.loss_funktion = Categorical_Cross_Entropy
+        selbst.ausgabe_aktivierung = Sigmoid()
+        selbst.loss_funktion = Mean_Squared_Error
 
     def vorwärtspropagierung(selbst, eingaben):
         selbst.versteckte_schicht.vorwärts(eingaben)
@@ -65,17 +69,17 @@ class Netzwerk:
         selbst.ausgabe_aktivierung.vorwärts(selbst.ausgabe_schicht.ausgaben)
 
     def trainieren(selbst, eingaben, lösungen):
-        for _ in range(20):
+        for _ in range(200):
             selbst.berechne_gradiant(eingaben, lösungen)
-            selbst.ausgabe_schicht.gewichte -= selbst.ausgabe_schicht.gradiantW * 1
-            selbst.ausgabe_schicht.bias -= selbst.ausgabe_schicht.gradiantB * 1
+            selbst.ausgabe_schicht.gewichte -= selbst.ausgabe_schicht.gradiantW * 0.1
+            selbst.ausgabe_schicht.bias -= selbst.ausgabe_schicht.gradiantB *0.1 
             selbst.versteckte_schicht.gewichte -= (
-                selbst.versteckte_schicht.gradiantW * 1
+                selbst.versteckte_schicht.gradiantW *0.1 
             )
-            selbst.versteckte_schicht.bias -= selbst.versteckte_schicht.gradiantB * 1
+            selbst.versteckte_schicht.bias -= selbst.versteckte_schicht.gradiantB *0.1 
 
     def berechne_gradiant(selbst, eingaben, lösungen):
-        h = 1
+        h = 0.001
         selbst.vorwärtspropagierung(eingaben)
         loss = selbst.loss_funktion(selbst.ausgabe_aktivierung.ausgaben, lösungen)
         print(loss)
@@ -135,7 +139,8 @@ def test():
 def trainieren():
     bilder, beschriftungen = lade_daten.lade_test_daten()
     netzwerk = Netzwerk()
-    netzwerk.trainieren(bilder[0:20], beschriftungen[0:20])
+    netzwerk.trainieren(bilder[0:10], beschriftungen[0:10])
 
 
 trainieren()
+test()

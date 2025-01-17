@@ -26,7 +26,7 @@ class ReLU:
 
 def Mean_Squared_Error(ausgaben, lösungen):
     losses = np.power(ausgaben - lösungen, 2)
-    avg_loss = np.sum(losses)
+    avg_loss = np.mean(losses)
     return avg_loss
 
 

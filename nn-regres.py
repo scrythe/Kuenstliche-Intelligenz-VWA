@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import animation
 
 
 class Schicht:
@@ -16,6 +17,11 @@ class Schicht:
 class Sigmoid:
     def vorwärts(selbst, eingaben):
         selbst.ausgaben = 1 / (1 + np.exp(-eingaben))
+
+
+class ReLU:
+    def vorwärts(selbst, eingaben):
+        selbst.ausgaben = np.maximum(0, eingaben)
 
 
 def Mean_Squared_Error(ausgaben, lösungen):
@@ -39,6 +45,8 @@ class Netzwerk:
         )
         selbst.ausgabe_aktivierung = Sigmoid()
         selbst.loss_funktion = Mean_Squared_Error
+        selbst.epochen = 5000
+        selbst.geschichte = []
 
     def vorwärtspropagierung(selbst, eingaben):
         selbst.versteckte_schicht.vorwärts(eingaben)
@@ -48,27 +56,34 @@ class Netzwerk:
         selbst.ausgabe_aktivierung.vorwärts(selbst.ausgabe_schicht.ausgaben)
         return selbst.ausgabe_aktivierung.ausgaben
 
-    def trainieren(selbst, line, eingaben, lösungen):
-        while True:
+    def trainieren(selbst, eingaben, lösungen):
+        for _ in range(selbst.epochen):
             selbst.berechne_gradiant(eingaben, lösungen)
             selbst.anwende_gradiant()
             ausgaben = selbst.vorwärtspropagierung(eingaben)
-            line.set_ydata(ausgaben)
-            plt.pause(1/600)
+            selbst.geschichte.append(ausgaben)
 
     def anwende_gradiant(selbst):
-        selbst.ausgabe_schicht.gewichte -= selbst.ausgabe_schicht.gradiantW * 0.1
-        selbst.ausgabe_schicht.bias-= selbst.ausgabe_schicht.gradiantB * 0.1
-        selbst.versteckte_schicht.gewichte -= selbst.versteckte_schicht.gradiantW * 0.1
-        selbst.versteckte_schicht.bias-= selbst.versteckte_schicht.gradiantB * 0.1
+        selbst.ausgabe_schicht.gewichte -= selbst.ausgabe_schicht.gradiantW * 0.5
+        selbst.ausgabe_schicht.bias -= selbst.ausgabe_schicht.gradiantB * 0.5
+        selbst.versteckte_schicht.gewichte -= selbst.versteckte_schicht.gradiantW * 0.5
+        selbst.versteckte_schicht.bias -= selbst.versteckte_schicht.gradiantB * 0.5
 
     def berechne_gradiant(selbst, eingaben, lösungen):
         ausgaben = selbst.vorwärtspropagierung(eingaben)
         loss = selbst.loss_funktion(ausgaben, lösungen)
-        selbst.berechne_gradiant_w_schicht(selbst.ausgabe_schicht,loss,eingaben,lösungen)
-        selbst.berechne_gradiant_b_schicht(selbst.ausgabe_schicht,loss,eingaben,lösungen)
-        selbst.berechne_gradiant_w_schicht(selbst.versteckte_schicht,loss,eingaben,lösungen)
-        selbst.berechne_gradiant_b_schicht(selbst.versteckte_schicht,loss,eingaben,lösungen)
+        selbst.berechne_gradiant_w_schicht(
+            selbst.ausgabe_schicht, loss, eingaben, lösungen
+        )
+        selbst.berechne_gradiant_b_schicht(
+            selbst.ausgabe_schicht, loss, eingaben, lösungen
+        )
+        selbst.berechne_gradiant_w_schicht(
+            selbst.versteckte_schicht, loss, eingaben, lösungen
+        )
+        selbst.berechne_gradiant_b_schicht(
+            selbst.versteckte_schicht, loss, eingaben, lösungen
+        )
 
     def berechne_gradiant_w_schicht(selbst, schicht, loss, eingaben, lösungen):
         h = 0.001
@@ -90,12 +105,34 @@ class Netzwerk:
             schicht.gradiantB[i] = delta_loss / 2
 
 
-x = np.arange(1, 5, 0.01)
-x = (x).reshape(400, 1)
+fig, ax = plt.subplots(figsize=(10, 5))
+(line,) = ax.plot([], [], label="NN Approximation", color="orange")
+ax.set_title("Neural Network Approximation of sin(x)")
+
+x = np.arange(1, 5, 0.1)
+x = (x).reshape(40, 1)
 y = np.sin(x)
-netzwerk = Netzwerk()
-plt.ion()
+
 plt.plot(x, y, color="blue", label="True Function")
 plt.scatter(x, y, color="red", s=10, label="Data Points")
-(line,) = plt.plot(x, np.zeros_like(x), label="Model Prediction", color="blue")
-netzwerk.trainieren(line, x, y)
+
+netzwerk = Netzwerk()
+netzwerk.trainieren(x, y)
+
+
+def init():
+    line.set_data([], [])
+    return (line,)
+
+
+def update(epoche):
+    line.set_data(x, netzwerk.geschichte[epoche])
+    ax.set_title(f"Epoch {epoche}/{netzwerk.epochen - 1}")
+    return (line,)
+
+
+animation = animation.FuncAnimation(
+    fig, update, frames=(netzwerk.epochen), init_func=init, blit=True, interval=1
+)
+
+plt.show()

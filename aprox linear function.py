@@ -24,7 +24,7 @@ class ReLU:
         selbst.ausgaben = np.maximum(0, eingaben)
         return selbst.ausgaben
 
-    def ableitung(selbst, eingaben):
+    def ableiten(selbst, eingaben):
         return 1 * (eingaben > 0)
 
 
@@ -40,7 +40,7 @@ class Mean_Squared_Error:
 
 class Netzwerk:
     def __init__(selbst):
-        netzwerk_größe = [1, 1, 1]
+        netzwerk_größe = [1, 3, 1]
         selbst.schicht1 = Schicht(netzwerk_größe[0], netzwerk_größe[1])
         selbst.schicht2 = Schicht(netzwerk_größe[1], netzwerk_größe[2])
         selbst.aktivierung1 = ReLU()
@@ -49,32 +49,53 @@ class Netzwerk:
         selbst.loss_funktion = Mean_Squared_Error
 
     def vorwärtsdurchlauf(selbst, eingaben):
-        # rohe_ausgaben_1 = selbst.schicht1.vorwärts(eingaben)
-        # aktivierte_ausgaben_1 = selbst.aktivierung1.vorwärts(rohe_ausgaben_1)
-        rohe_ausgaben_2 = selbst.schicht2.vorwärts(eingaben)
+        rohe_ausgaben_1 = selbst.schicht1.vorwärts(eingaben)
+        aktivierte_ausgaben_1 = selbst.aktivierung1.vorwärts(rohe_ausgaben_1)
+        rohe_ausgaben_2 = selbst.schicht2.vorwärts(aktivierte_ausgaben_1)
         aktivierte_ausgaben_2 = selbst.aktivierung2.vorwärts(rohe_ausgaben_2)
         return aktivierte_ausgaben_2
 
     def trainieren(selbst, eingaben, lösungen):
         geschichte = []
         loss = 100
-        for _ in range(500):
+        for _ in range(1000):
             # while loss > 6:
             ausgaben = selbst.vorwärtsdurchlauf(eingaben)
             loss = selbst.loss_funktion.berechnen(ausgaben, lösungen)
+            # print(loss)
             geschichte.append(ausgaben)
             selbst.rückwärts(eingaben, lösungen)
         return geschichte
 
     def rückwärts(selbst, eingaben, lösungen):
+        lern_rate = 0.0001
+        ausgaben = selbst.vorwärtsdurchlauf(eingaben)
+        loss = selbst.loss_funktion.berechnen(ausgaben, lösungen)
         dloss = selbst.loss_funktion.ableiten(selbst.aktivierung2.ausgaben, lösungen)
-        drelu = dloss * selbst.aktivierung2.ableitung(selbst.schicht2.ausgaben)
-        dweight = drelu * eingaben
-        dweight = np.mean(dweight)
+        drelu = dloss * selbst.aktivierung2.ableiten(selbst.schicht2.ausgaben)
+        dweight = drelu * selbst.aktivierung1.ausgaben
+        dweight = np.mean(dweight, axis=0, keepdims=True).T
         dbias = np.mean(drelu)
 
-        selbst.schicht2.gewichte -= dweight * 0.1
-        selbst.schicht2.bias -= dbias * 0.1
+        # selbst.schicht2.gewichte -= dweight * lern_rate
+        # selbst.schicht2.bias -= dbias * lern_rate
+
+        d_ausgabe_1 = np.dot(drelu, selbst.schicht2.gewichte.T)
+        # dweight = d_ausgabe_1 * eingaben
+        # dweight = np.mean(dweight, axis=0)
+        # dbias = np.mean(d_ausgabe_1, axis=0)
+
+        selbst.aktivierung1.ausgaben += 0.001
+        rohe_ausgaben_2 = selbst.schicht2.vorwärts(selbst.aktivierung1.ausgaben)
+        aktivierte_ausgaben_2 = selbst.aktivierung2.vorwärts(rohe_ausgaben_2)
+        delta_loss = (
+            selbst.loss_funktion.berechnen(aktivierte_ausgaben_2, lösungen) - loss
+        )
+        print(delta_loss / 0.001)
+        print(np.mean(np.sum(d_ausgabe_1, axis=1)))
+
+        # selbst.schicht1.gewichte -= dweight * lern_rate
+        # selbst.schicht1.bias -= dbias * lern_rate
 
 
 def f(x):
@@ -108,15 +129,14 @@ def update(epoche):
     ax.set_title(f"Epoche {epoche}")
 
 
-framge_range = range(0, len(geschichte), 5)
-
+framge_range = range(0, len(geschichte), 1)
 ani = animation.FuncAnimation(
-    fig, update, frames=framge_range, init_func=init, interval=20, repeat=False
+    fig, update, frames=framge_range, init_func=init, interval=50, repeat=False
 )
 
-writer = animation.FFMpegWriter(
-    fps=15, metadata=dict(artist="Magomed Alimkhanov"), bitrate=1800
-)
-ani.save("hm.gif", writer)
+# writer = animation.FFMpegWriter(
+#     fps=15, metadata=dict(artist="Magomed Alimkhanov"), bitrate=1800
+# )
+# ani.save("hm.gif", writer)
 
 plt.show()

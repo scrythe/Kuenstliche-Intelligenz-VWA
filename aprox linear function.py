@@ -5,8 +5,8 @@ from matplotlib import animation
 
 class Schicht:
     def __init__(selbst, anzahl_eingaben, anzahl_neuronen):
-        selbst.gewichte = [[2]]
-        selbst.bias = [[-2]]
+        selbst.gewichte = np.random.rand(anzahl_eingaben, anzahl_neuronen)
+        selbst.bias = np.zeros((1, anzahl_neuronen))
 
     def vorwärts(selbst, eingaben):
         selbst.ausgaben = np.dot(eingaben, selbst.gewichte) + selbst.bias
@@ -53,15 +53,14 @@ class Netzwerk:
         return selbst.ausgabe_aktivierung.ausgaben
 
     def trainieren(selbst, eingaben, lösungen):
-        loss = 1
         geschichte = []
-        # losses = []
-        while loss > 0.01:
+        loss = 100
+        # for _ in range(500):
+        while loss > 6:
             ausgaben = selbst.vorwärtspropagierung(eingaben)
-            selbst.rückwärts(eingaben, lösungen)
+            loss = selbst.loss_funktion(ausgaben, lösungen)
             geschichte.append(ausgaben)
-            loss = selbst.loss_funktion(selbst.ausgabe_aktivierung.ausgaben, lösungen)
-            print(loss)
+            selbst.rückwärts(eingaben, lösungen)
         return geschichte
 
     def rückwärts(selbst, eingaben, lösungen):
@@ -75,37 +74,48 @@ class Netzwerk:
 
         selbst.ausgabe_schicht.gewichte -= dweight * 0.1
         selbst.ausgabe_schicht.bias -= dbias * 0.1
-        # plt.scatter(
-        #     eingaben,
-        #     dweight,
-        #     color="green",
-        # )
 
 
 def f(x):
-    return 3 * x + 2
+    return 3 * x * x
 
 
-x = np.arange(0, 5, 0.5)
-x = (x).reshape(10, 1)
-y = f(x)
+eingaben = np.arange(0, 5, 0.5).reshape(10, 1)
+lösungen = f(eingaben)
+
 
 fig, ax = plt.subplots(figsize=(10, 5))
-(line,) = ax.plot([], [], label="NN Approximation", color="orange")
+(linie,) = ax.plot([], [], label="Approximation", color="orange")
+(punkte,) = ax.plot([], [], "x", label="Ausgabe Daten", color="green")
 
-plt.plot(x, y, color="blue", label="True Function")
-plt.scatter(x, y, color="red", s=10, label="Data Points")
+plt.plot(eingaben, lösungen, color="blue", label="Wahre Funktion Function")
+plt.plot(eingaben, lösungen, "x", color="red", label="Trainings Daten")
+
 
 netzwerk = Netzwerk()
-geschichte = netzwerk.trainieren(x, y)
+geschichte = netzwerk.trainieren(eingaben, lösungen)
+
+
+def init():
+    linie.set_xdata(eingaben)
+    punkte.set_xdata(eingaben)
 
 
 def update(epoche):
-    line.set_data(x, geschichte[epoche])
+    linie.set_ydata(geschichte[epoche])
+    punkte.set_ydata(geschichte[epoche])
     ax.set_title(f"Epoche {epoche}")
-    return (line,)
 
 
-ani = animation.FuncAnimation(fig, update, frames=(len(geschichte)), interval=50)
+framge_range = range(0, len(geschichte), 5)
+
+ani = animation.FuncAnimation(
+    fig, update, frames=framge_range, init_func=init, interval=50, repeat=False
+)
+
+# writer = animation.PillowWriter(
+#     fps=15, metadata=dict(artist="Magomed Alimkhanov"), bitrate=1800
+# )
+# ani.save("hm.gif", writer)
 
 plt.show()

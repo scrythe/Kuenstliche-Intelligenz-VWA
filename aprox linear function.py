@@ -50,7 +50,7 @@ class SGD:
 
 class Netzwerk:
     def __init__(selbst):
-        lern_rate = 0.1
+        lern_rate = 0.001
         selbst.schicht1 = Schicht(1, 8)
         selbst.aktivierung1 = ReLU()
         selbst.schicht2 = Schicht(8, 8)
@@ -84,7 +84,6 @@ class Netzwerk:
 
     def rückwärts_durchlauf(selbst, eingaben, lösungen):
         dloss = selbst.loss_funktion.rückwärts(selbst.schicht3.ausgaben, lösungen)
-        loss = selbst.loss_funktion.vorwärts(selbst.schicht3.ausgaben, lösungen)
         selbst.schicht3.rückwärts(dloss)
         selbst.aktivierung2.rückwärts(selbst.schicht3.deingaben)
         selbst.schicht2.rückwärts(selbst.aktivierung2.deingaben)
@@ -111,67 +110,7 @@ plt.plot(eingaben, lösungen, "x", color="red", label="Trainings Daten")
 
 netzwerk = Netzwerk()
 
-
-def optimal():
-    netzwerk.schicht1.gewichte = [
-        [1.2072, -0.7405, 1.3646, 0.5692, 1.6801, -0.1454, -0.4372, 1.1967]
-    ]
-
-    netzwerk.schicht1.bias = [
-        [
-            -2.0098,
-            -0.0290,
-            0.7159,
-            0.5741,
-            0.7426,
-            -0.4148,
-            1.9866,
-            0.5851,
-        ]
-    ]
-
-    netzwerk.schicht2.gewichte = [
-        [1.2142, 0.8653, -0.2282, -0.2028, 0.9729, -1.3938, 0.0808, 0.2845],
-        [-0.2687, 0.1175, 0.0131, -0.0079, -0.1701, 0.2546, 0.1974, 0.24],
-        [0.2806, 0.7469, -0.114, 0.0514, 0.683, 0.4402, -0.0339, -0.2846],
-        [0.4742, 0.5785, 0.0451, -0.1938, 0.2171, 0.6416, -0.2316, -0.058],
-        [0.5731, 0.7834, -0.1861, 0.0798, 0.9531, -0.0173, -0.2048, 0.0684],
-        [0.1354, 0.0085, -0.0252, 0.1742, 0.1655, -0.2682, 0.1864, -0.0308],
-        [-2.6353, -2.2848, -0.1197, -0.2494, -1.8291, 1.2427, -0.1891, -0.2045],
-        [0.7434, 0.4293, 0.171, -0.409, 0.9035, -0.0922, -0.2061, -0.2992],
-    ]
-
-    netzwerk.schicht2.bias = [
-        [
-            0.2191,
-            0.1604,
-            -0.0102,
-            -0.4476,
-            -0.0385,
-            0.4184,
-            -0.3466,
-            0.3397,
-        ]
-    ]
-
-    netzwerk.schicht3.gewichte = [
-        [0.8571],
-        [1.0345],
-        [-0.0774],
-        [-0.1742],
-        [0.9437],
-        [-0.9353],
-        [-0.0455],
-        [-0.2133],
-    ]
-
-    netzwerk.schicht3.bias = [[0.4596]]
-
-
-optimal()
-# geschichte = netzwerk.trainieren(eingaben, lösungen)
-(ausgaben, _) = netzwerk.vorwärts_durchlauf(eingaben)
-geschichte = [ausgaben]
+geschichte = netzwerk.trainieren(eingaben, lösungen)
 
 
 def init():

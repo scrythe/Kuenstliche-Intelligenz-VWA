@@ -71,7 +71,7 @@ class Categorical_Cross_Entropy:
 
 class Netzwerk:
     def __init__(selbst):
-        selbst.lern_rate = 0.1
+        selbst.lern_rate = 0.01
         selbst.schicht1 = Schicht(784, 20)
         selbst.aktivierung1 = ReLU()
         selbst.schicht2 = Schicht(20, 20)
@@ -122,44 +122,64 @@ class Netzwerk:
         return genauigkeit
 
     def trainieren(selbst, eingaben, lösungen):
-        geschichte = []
-        kost = 1
-        for _ in range(500):
-            # while kost > 0.01:
-            prädiktionen = selbst.vorwärts_durchlauf(eingaben)
-            selbst.rückwärts_durchlauf(prädiktionen, lösungen)
-            selbst.SGD_optimierer()
-            kost = selbst.kost_funktion.berechnen(prädiktionen, lösungen)
-            genauigkeit = selbst.berechne_genauigkeit(prädiktionen, lösungen)
+        batch_größe = 128
+        epochen = 20
+        anzahl_trainings_daten = len(eingaben)
+        kost = 0
+        genauigkeit = 0
+        mini_batches_eingaben = [
+            (eingaben)[k : k + batch_größe]
+            for k in range(0, anzahl_trainings_daten, batch_größe)
+        ]
+        mini_batches_lösungen = [
+            (lösungen)[k : k + batch_größe]
+            for k in range(0, anzahl_trainings_daten, batch_größe)
+        ]
+        for _ in range(epochen):
+            for batch_eingaben, batch_lösungen in zip(
+                mini_batches_eingaben, mini_batches_lösungen
+            ):
+                prädiktionen = selbst.vorwärts_durchlauf(batch_eingaben)
+                selbst.rückwärts_durchlauf(prädiktionen, batch_lösungen)
+                selbst.SGD_optimierer()
+                kost = selbst.kost_funktion.berechnen(prädiktionen, batch_lösungen)
+                genauigkeit = selbst.berechne_genauigkeit(prädiktionen, batch_lösungen)
             print(
                 "Genauigkeit: ",
                 genauigkeit,
                 "Kost: ",
                 kost,
             )
-            geschichte.append(prädiktionen)
-        return geschichte
+
+
+netzwerk = Netzwerk()
 
 
 def trainieren():
-    netzwerk = Netzwerk()
     bilder, beschriftungen = lade_daten.lade_trainings_daten()
+    keys = np.array(range(bilder.shape[0]))
+    np.random.shuffle(keys)
+    bilder = bilder[keys]
+    beschriftungen = beschriftungen[keys]
     bilder = (
         bilder.reshape(bilder.shape[0], -1).astype(np.float32) - 127.5
     ) / 127.5  # Zwischen -1 und 1
     netzwerk.trainieren(bilder, beschriftungen)
 
 
-# def testen():
-#     bilder, _ = lade_daten.lade_test_daten()
-#     netzwerk = Netzwerk()
-#     index = int(input("Zahl von 0 bis 59999: "))
-#     prädiktion = netzwerk.vorwärts_durchlauf(bilder[index])
-#     prädiktion = np.argmax(prädiktion)
-#     plt.imshow(bilder[index].reshape(28, 28), cmap="Greys")
-#     plt.title(prädiktion)
-#     plt.show()
+def testen():
+    bilder, _ = lade_daten.lade_test_daten()
+    bilder = (
+        bilder.reshape(bilder.shape[0], -1).astype(np.float32) - 127.5
+    ) / 127.5  # Zwischen -1 und 1
+    while True:
+        index = int(input("Zahl von 0 bis 9999: "))
+        prädiktion = netzwerk.vorwärts_durchlauf(bilder[index])
+        prädiktion = np.argmax(prädiktion)
+        plt.imshow(bilder[index].reshape(28, 28), cmap="Greys")
+        plt.title(prädiktion)
+        plt.show()
 
 
 trainieren()
-# testen()
+testen()

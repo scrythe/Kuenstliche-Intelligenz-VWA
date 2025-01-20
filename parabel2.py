@@ -7,6 +7,12 @@ def f(x):
     return 0.05 * np.power(x, 3) - 0.5 * x
 
 
+def Mean_Squared_Error(prädiktionen, lösungen):
+    verluste = np.power(prädiktionen - lösungen, 2)
+    kost = np.mean(verluste)
+    return kost
+
+
 class Netzwerk:
     def __init__(selbst):
         selbst.a = 0.01
@@ -16,30 +22,20 @@ class Netzwerk:
         prädiktionen = selbst.a * np.power(eingaben, 3) + selbst.b * eingaben
         return prädiktionen
 
-    def berechne_kost(selbst, eingaben, lösungen):
-        prädiktionen = selbst.vorwärts_durchlauf(eingaben)
-        verluste = np.power(prädiktionen - lösungen, 2)
-        kost = np.mean(verluste)
-        return kost
-
     def rückwärts_durchlauf(selbst, eingaben, lösungen):
-        h = 0.0001
-        kost = selbst.berechne_kost(eingaben, lösungen)
-        gradiant = [0, 0]
+        prädiktionen = selbst.vorwärts_durchlauf(eingaben)
+        dverlust_dprädiktion = 2 * (prädiktionen - lösungen)
+        dkosten_dprädiktion = dverlust_dprädiktion / len(prädiktionen)
 
-        selbst.a += h
-        dkost = selbst.berechne_kost(eingaben, lösungen) - kost
-        selbst.a -= h
-        gradiant[0] = dkost / h
-
-        selbst.b += h
-        dkost = selbst.berechne_kost(eingaben, lösungen) - kost
-        selbst.b -= h
-        gradiant[1] = dkost / h
+        dkosten_da = dkosten_dprädiktion = dkosten_dprädiktion * np.power(eingaben, 3)
+        dkosten_db = dkosten_dprädiktion = dkosten_dprädiktion * eingaben
+        da = np.sum(dkosten_da)
+        db = np.sum(dkosten_db)
+        gradiant = (da, db)
         return gradiant
 
     def parameter_anpassen(selbst, gradiant):
-        lern_rate = 0.0004
+        lern_rate = 0.0001
         selbst.a -= gradiant[0] * lern_rate
         selbst.b -= gradiant[1] * lern_rate
 
@@ -47,8 +43,8 @@ class Netzwerk:
         geschichte = []
         kost = 1
         while kost > 0.0001:
-            kost = selbst.berechne_kost(eingaben, lösungen)
             prädiktionen = selbst.vorwärts_durchlauf(eingaben)
+            kost = Mean_Squared_Error(prädiktionen, lösungen)
             geschichte.append(prädiktionen)
             gradiant = selbst.rückwärts_durchlauf(eingaben, lösungen)
             selbst.parameter_anpassen(gradiant)
@@ -88,7 +84,7 @@ def update(epoche):
 framge_range = range(0, len(geschichte), 10)
 
 ani = animation.FuncAnimation(
-    fig, update, frames=framge_range, init_func=init, interval=10, repeat=False
+    fig, update, frames=framge_range, init_func=init, interval=100, repeat=False
 )
 
 plt.show()

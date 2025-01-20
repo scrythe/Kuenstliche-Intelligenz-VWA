@@ -5,7 +5,7 @@ from matplotlib import animation
 
 class Schicht:
     def __init__(selbst, anzahl_eingaben, anzahl_neuronen):
-        selbst.gewichte = np.random.rand(anzahl_eingaben, anzahl_neuronen)
+        selbst.gewichte = 0.1 * np.random.randn(anzahl_eingaben, anzahl_neuronen)
         selbst.bias = np.zeros((1, anzahl_neuronen))
 
     def vorwärts(selbst, eingaben):
@@ -50,12 +50,12 @@ class SGD:
 
 class Netzwerk:
     def __init__(selbst):
-        lern_rate = 0.001
-        selbst.schicht1 = Schicht(1, 8)
+        lern_rate = 0.05
+        selbst.schicht1 = Schicht(1, 64)
         selbst.aktivierung1 = ReLU()
-        selbst.schicht2 = Schicht(8, 8)
+        selbst.schicht2 = Schicht(64, 64)
         selbst.aktivierung2 = ReLU()
-        selbst.schicht3 = Schicht(8, 1)
+        selbst.schicht3 = Schicht(64, 1)
         selbst.loss_funktion = Mean_Squared_Error
         selbst.optimierer = SGD(lern_rate)
 
@@ -71,7 +71,7 @@ class Netzwerk:
     def trainieren(selbst, eingaben, lösungen):
         geschichte = []
         # loss = 100
-        for _ in range(1000):
+        for _ in range(20000):
             # while loss > 6:
             ausgaben, loss = selbst.vorwärts_durchlauf(eingaben)
             # print(loss)
@@ -92,10 +92,16 @@ class Netzwerk:
 
 
 def f(x):
-    return 3 * x**2
+    return np.sin(x)
 
 
-eingaben = np.arange(0, 5, 0.5).reshape(10, 1)
+def f(x):
+    return 0.05 * np.power(x, 3) - 0.5 * x
+
+
+eingaben = np.arange(0, 5, 0.1).reshape(50, 1)
+eingaben = np.arange(-5, 5, 0.5)
+eingaben = eingaben.reshape(len(eingaben), 1)
 # eingaben = np.arange(2, 10, 5).reshape(2, 1)
 lösungen = f(eingaben)
 
@@ -104,7 +110,7 @@ fig, ax = plt.subplots(figsize=(10, 5))
 (linie,) = ax.plot([], [], label="Approximation", color="orange")
 (punkte,) = ax.plot([], [], "x", label="Ausgabe Daten", color="green")
 
-plt.plot(eingaben, lösungen, color="blue", label="Wahre Funktion Function")
+# plt.plot(eingaben, lösungen, color="blue", label="Wahre Funktion Function")
 plt.plot(eingaben, lösungen, "x", color="red", label="Trainings Daten")
 
 
@@ -124,14 +130,16 @@ def update(epoche):
     ax.set_title(f"Epoche {epoche}")
 
 
-framge_range = range(0, len(geschichte), 1)
-ani = animation.FuncAnimation(
-    fig, update, frames=framge_range, init_func=init, interval=50, repeat=False
-)
+linie.set_data(eingaben, geschichte[-1])
+
+# framge_range = range(0, len(geschichte), 50)
+# ani = animation.FuncAnimation(
+#     fig, update, frames=framge_range, init_func=init, interval=100, repeat=False
+# )
 
 # writer = animation.FFMpegWriter(
 #     fps=15, metadata=dict(artist="Magomed Alimkhanov"), bitrate=1800
 # )
-# ani.save("hm.gif", writer)
+# ani.save("hm.mp4", writer)
 
 plt.show()

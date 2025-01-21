@@ -127,7 +127,7 @@ class Netzwerk:
         return mini_batches_eingaben, mini_batches_lösungen
 
     def trainieren(selbst, eingaben, lösungen):
-        batch_größe = 4
+        batch_größe = 16
         epochen = 500
         anzahl_trainings_daten = len(eingaben)
         kosten = []
@@ -157,7 +157,7 @@ class Netzwerk:
                 "Kost: ",
                 avg_kost,
             )
-            if avg_kost <= 0.01:
+            if avg_kost <= 0.1:
                 break
 
 
@@ -193,7 +193,7 @@ def testen(netzwerk):
     )
 
 
-soll_trainieren = True
+soll_trainieren = False
 interaktiv = False
 
 if not os.path.isfile("netzwerk.pickle") or soll_trainieren == True:

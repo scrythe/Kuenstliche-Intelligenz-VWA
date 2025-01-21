@@ -1,12 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import lade_daten
+import os
 
 
 class Schicht:
     def __init__(selbst, anzahl_eingaben, anzahl_neuronen):
         selbst.gewichte = 0.1 * np.random.randn(anzahl_eingaben, anzahl_neuronen)
-        selbst.bias = np.zeros((1, anzahl_neuronen))
+        selbst.bias = np.random.randn(1, anzahl_neuronen)
 
     def vorwärts(selbst, eingaben):
         selbst.eingaben = eingaben
@@ -135,7 +136,7 @@ class Netzwerk:
             (lösungen)[k : k + batch_größe]
             for k in range(0, anzahl_trainings_daten, batch_größe)
         ]
-        for _ in range(epochen):
+        for epoche in range(epochen):
             for batch_eingaben, batch_lösungen in zip(
                 mini_batches_eingaben, mini_batches_lösungen
             ):
@@ -145,7 +146,9 @@ class Netzwerk:
                 kost = selbst.kost_funktion.berechnen(prädiktionen, batch_lösungen)
                 genauigkeit = selbst.berechne_genauigkeit(prädiktionen, batch_lösungen)
             print(
-                "Genauigkeit: ",
+                "Epoche: ",
+                epoche,
+                " Genauigkeit: ",
                 genauigkeit,
                 "Kost: ",
                 kost,
@@ -155,7 +158,7 @@ class Netzwerk:
 netzwerk = Netzwerk()
 
 
-def trainieren():
+def trainieren(netzwerk):
     bilder, beschriftungen = lade_daten.lade_trainings_daten()
     keys = np.array(range(bilder.shape[0]))
     np.random.shuffle(keys)
@@ -167,11 +170,8 @@ def trainieren():
     netzwerk.trainieren(bilder, beschriftungen)
 
 
-def testen():
+def interaktives_testen(netzwerk):
     bilder, _ = lade_daten.lade_test_daten()
-    bilder = (
-        bilder.reshape(bilder.shape[0], -1).astype(np.float32) - 127.5
-    ) / 127.5  # Zwischen -1 und 1
     while True:
         index = int(input("Zahl von 0 bis 9999: "))
         prädiktion = netzwerk.vorwärts_durchlauf(bilder[index])
@@ -181,5 +181,25 @@ def testen():
         plt.show()
 
 
-trainieren()
-testen()
+def testen(netzwerk):
+    bilder, beschriftungen = lade_daten.lade_test_daten()
+    prädiktionen=netzwerk.vorwärts_durchlauf(bilder)
+    kost = netzwerk.kost_funktion.berechnen(prädiktionen, beschriftungen)
+    genauigkeit = netzwerk.berechne_genauigkeit(prädiktionen, beschriftungen)
+    print(
+        "Genauigkeit: ",
+        genauigkeit,
+        "Kost: ",
+        kost,
+    )
+
+
+
+if os.path.isfile("netzwerk.pickle"):
+    netzwerk = lade_daten.lade_netzwerk()
+    # interaktives_testen(netzwerk)
+    testen(netzwerk)
+else:
+    netzwerk= Netzwerk()
+    trainieren(netzwerk)
+    lade_daten.speicher_netzwerk(netzwerk)

@@ -14,10 +14,8 @@ def lade_bilder(datei):
         bilder_daten = f.read()
         bilder = np.frombuffer(bilder_daten, dtype=np.uint8).reshape(anzahl_bilder, 784)
         bilder = (
-            bilder.reshape(bilder.shape[0], -1).astype(np.float32) - 127.5)
-        # .reshape(
-        #     (anzahl_bilder, 28, 28)
-        # )
+            bilder.reshape(bilder.shape[0], -1).astype(np.float32) - 127.5
+        ) / 127.5  # Zwischen -1 und 1
         return bilder
 
 
@@ -26,19 +24,21 @@ def lade_beschriftungen(datei):
         f.read(8)  # Überspringen des Headers (Magic Number und Anzahl der Labels)
         beschriftungs_daten = f.read()
         beschriftungen = np.frombuffer(beschriftungs_daten, dtype=np.uint8)
+        beschriftungen = np.eye(10)[beschriftungen]
         return beschriftungen
 
 
 def lade_trainings_daten():
     bilder = lade_bilder("daten/train-images-idx3-ubyte.gz")
-    beschriftung = lade_beschriftungen("daten/train-labels-idx1-ubyte.gz")
-    return bilder, beschriftung
+    beschriftungen = lade_beschriftungen("daten/train-labels-idx1-ubyte.gz")
+    return bilder, beschriftungen
 
 
 def lade_test_daten():
     bilder = lade_bilder("daten/t10k-images-idx3-ubyte.gz")
-    beschriftung = lade_beschriftungen("daten/t10k-labels-idx1-ubyte.gz")
-    return bilder, beschriftung
+    beschriftungen = lade_beschriftungen("daten/t10k-labels-idx1-ubyte.gz")
+    return bilder, beschriftungen
+
 
 def speicher_netzwerk(netzwerk):
     with open("netzwerk.pickle", "wb") as f:
@@ -48,5 +48,5 @@ def speicher_netzwerk(netzwerk):
 
 def lade_netzwerk():
     with open("netzwerk.pickle", "rb") as f:
-        netzwerk=pickle.load(f)
+        netzwerk = pickle.load(f)
     return netzwerk

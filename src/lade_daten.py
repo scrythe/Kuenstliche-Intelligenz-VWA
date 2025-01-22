@@ -1,6 +1,7 @@
 import gzip
 import numpy as np
 import pickle
+from netzwerk import Netzwerk
 
 
 def lade_bilder(datei):
@@ -40,13 +41,13 @@ def lade_test_daten():
     return bilder, beschriftungen
 
 
-def speicher_netzwerk(netzwerk):
+def speicher_netzwerk(netzwerk: Netzwerk):
     with open("netzwerk.pickle", "wb") as f:
         pickle.dump(netzwerk, f)
     print("fertig")
 
 
-def lade_netzwerk():
+def lade_netzwerk() -> Netzwerk:
     with open("netzwerk.pickle", "rb") as f:
         netzwerk = pickle.load(f)
     return netzwerk

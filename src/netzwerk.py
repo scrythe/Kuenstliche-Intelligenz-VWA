@@ -79,7 +79,7 @@ class Netzwerk:
             # Veränderung der Gewichte, es Bias-Werte und den aktivierten Ausgaben der vorherigen Schicht auf den Verlust) (dL/dW) (dL/db) (dL/da)
             gradient = schicht.rueckwaerts(gradient)
 
-    def berechne_genauigkeit(selbst, vorhersagen, ziele):
+    def berechne_genauigkeit(selbst, vorhersagen, ziele) -> float:
         """
         Berechnet die Genauigkeit der Vorhersagen im Vergleich zu den tatsächlichen Zielen.
 
@@ -96,7 +96,7 @@ class Netzwerk:
         genauigkeit = np.mean(vergleich)
         return genauigkeit
 
-    def daten_vermischen(selbst, eingaben, ziele):
+    def daten_vermischen(selbst, eingaben, ziele) -> tuple[ndarray, ndarray]:
         """
         Vermischt die Eingabedaten und die Zielwerte
 

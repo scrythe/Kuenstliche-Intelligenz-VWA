@@ -22,10 +22,10 @@ class Schicht:
             anzahl_eingaben (int): Anzahl der Eingabeneuronen.
             anzahl_neuronen (int): Anzahl der Neuronen in dieser Schicht.
         """
-        self.gewichte = np.random.randn(
+        self.gewichte = 0.1 * np.random.randn(
             anzahl_eingaben, anzahl_neuronen
         )  # Zufällige Gewichte
-        self.bias = np.random.randn(1, anzahl_neuronen)  # Zufällige Bias-Werte
+        self.bias = 0.1 * np.random.randn(1, anzahl_neuronen)  # Zufällige Bias-Werte
 
     def vorwaerts(self, eingaben: ndarray) -> ndarray:
         """
@@ -39,7 +39,7 @@ class Schicht:
             ndarray: Die berechnete rohe Ausgabematrix dieser Schicht.
         """
         self.gespeicherte_eingaben = eingaben
-        ausgaben = np.dot(eingaben, self.gewichtsmatrix) + self.bias_vektor
+        ausgaben = np.dot(eingaben, self.gewichte) + self.bias
         return ausgaben
 
     def rueckwaerts(self, verlustgradient: ndarray) -> ndarray:
@@ -59,5 +59,5 @@ class Schicht:
         self.bias_gradient = np.sum(verlustgradient, axis=0, keepdims=True)
 
         # Gradient der Eingaben berechnen (dL/da)
-        eingabe_gradient = np.dot(verlustgradient, self.gewicht_matrix.T)
+        eingabe_gradient = np.dot(verlustgradient, self.gewichte.T)
         return eingabe_gradient

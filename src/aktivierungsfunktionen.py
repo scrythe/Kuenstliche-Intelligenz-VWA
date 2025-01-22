@@ -43,7 +43,7 @@ class ReLU(AktivierungsFunktion):
     def vorwaerts(self, eingaben):
 
         self.gespeicherte_eingaben = eingaben
-        ausgaben = np.maximum(0, ausgaben)
+        ausgaben = np.maximum(0, eingaben)
         return ausgaben
 
     def rueckwaerts(self, verlustgradient):

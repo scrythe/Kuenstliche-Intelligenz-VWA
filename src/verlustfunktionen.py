@@ -1,5 +1,5 @@
-# Kostenfunktion: Kreuzentropie
 import numpy as np
+from numpy import ndarray
 
 
 class VerlustFunktion:
@@ -8,7 +8,7 @@ class VerlustFunktion:
     """
 
     @staticmethod
-    def verlust(vorhersagen, ziele):
+    def verlust(vorhersagen: ndarray, ziele: ndarray) -> float:
         """
         Berechnet den Mittelwert der Verluste.
 
@@ -22,7 +22,7 @@ class VerlustFunktion:
         raise NotImplementedError
 
     @staticmethod
-    def rueckwaerts(vorhersagen, ziele):
+    def rueckwaerts(vorhersagen: ndarray, ziele: ndarray) -> ndarray:
         """
         Berechnet den Gradienten der Verlustfunktion
 
@@ -31,7 +31,7 @@ class VerlustFunktion:
             ziele (ndarray): Korrekte Lösungen.
 
         Rückgabewert:
-            ndarray: Der berechnete Gradient für die Verlustfunktion (Veränderung der vorhersagen auf den Verlust) (dL/da).
+            ndarray: Der berechnete Gradient für die Verlustfunktion (Veränderung der Vorhersagen auf den Verlust) (dL/da).
         """
         raise NotImplementedError
 

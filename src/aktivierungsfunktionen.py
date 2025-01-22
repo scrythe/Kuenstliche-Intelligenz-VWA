@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import ndarray
 
 
 class AktivierungsFunktion:
@@ -6,7 +7,7 @@ class AktivierungsFunktion:
     Template-Aktivierungsfunktion für versteckten Schichten und Ausgabeschicht.
     """
 
-    def vorwaerts(self, eingaben):
+    def vorwaerts(self, eingaben: ndarray) -> ndarray:
         """
         Führt die Vorwärtspropagierung durch: Aktiviert nur positive Werte speichert die aktuellen Eingaben für die Rückwärtspropagation.
 
@@ -18,7 +19,7 @@ class AktivierungsFunktion:
         """
         raise NotImplementedError
 
-    def rueckwaerts(self, verlustgradient):
+    def rueckwaerts(self, verlustgradient: ndarray) -> ndarray:
         """
         Führt die Rückwärtspropagation durch: Berechnet den Gradienten für die Eingaben.
 

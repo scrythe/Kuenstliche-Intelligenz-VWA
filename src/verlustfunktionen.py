@@ -59,3 +59,19 @@ class Kreuzentropie:
             ndarray: Der berechnete Gradient für die Verlustfunktion in Kombination mit Softmax (Veränderung der rohen Ausgaben der aktuellen Schicht auf den Verlust) (dL/dz).
         """
         return (vorhersagen - ziele) / len(vorhersagen)
+
+
+class MittlererQuadratischerFehler(VerlustFunktion):
+    """
+    Mean-Squared-Error (MSE)-Verlustfunktion.
+    """
+
+    @staticmethod
+    def verlust(vorhersagen: ndarray, ziele: ndarray) -> float:
+        # Berechnet den mittleren quadratischen Fehler (MSE).
+        return np.mean(np.square(vorhersagen - ziele))
+
+    @staticmethod
+    def rueckwaerts(vorhersagen: ndarray, ziele: ndarray) -> ndarray:
+        # Berechnet den Gradienten der MSE-Verlustfunktion.
+        return 2 * (vorhersagen - ziele) / len(vorhersagen)

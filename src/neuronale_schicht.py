@@ -42,22 +42,22 @@ class Schicht:
         ausgaben = np.dot(eingaben, self.gewichte) + self.bias
         return ausgaben
 
-    def rueckwaerts(self, verlustgradient: ndarray) -> ndarray:
+    def rueckwaerts(self, verlust_gradient: ndarray) -> ndarray:
         """
         Führt die Rückwärtspropagation durch: Berechnet die Gradienten für Gewichte, Bias und Eingaben.
 
         Parameter:
-            verlustgradient (ndarray): Der Gradient des Verlusts (Veränderung der rohen Ausgaben der aktuellen Schicht auf den Verlust) (dL/dz).
+            verlust_gradient (ndarray): Der Gradient des Verlusts (Veränderung der rohen Ausgaben der aktuellen Schicht auf den Verlust) (dL/dz).
 
         Rückgabewert:
             ndarray: Der berechnete Gradient für die Eingaben (Veränderung der aktivierten Ausgaben der vorherigen Schicht auf den Verlust) (dL/da).
         """
         # Gradient der Gewichte berechnen (dL/dW)
-        self.gewicht_gradient = np.dot(self.gespeicherte_eingaben.T, verlustgradient)
+        self.gewicht_gradient = np.dot(self.gespeicherte_eingaben.T, verlust_gradient)
 
         # Gradient der Bias-Werte berechnen (dL/db)
-        self.bias_gradient = np.sum(verlustgradient, axis=0, keepdims=True)
+        self.bias_gradient = np.sum(verlust_gradient, axis=0, keepdims=True)
 
         # Gradient der Eingaben berechnen (dL/da)
-        eingabe_gradient = np.dot(verlustgradient, self.gewichte.T)
+        eingabe_gradient = np.dot(verlust_gradient, self.gewichte.T)
         return eingabe_gradient

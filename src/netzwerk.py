@@ -51,7 +51,6 @@ class Netzwerk:
         Rückgabewert:
             ndarray: Matrix der vorhergesagten Ausgaben
         """
-        aktivierte_ausgaben = []
         for schicht, aktivierung in zip(self.schichten, self.aktivierungen):
             rohe_ausgaben = schicht.vorwaerts(eingaben)
             aktivierte_ausgaben = aktivierung.vorwaerts(rohe_ausgaben)
@@ -59,7 +58,7 @@ class Netzwerk:
             eingaben = aktivierte_ausgaben
         return aktivierte_ausgaben
 
-    def rueckwaerts_durchlauf(self, vorhersagen: ndarray, ziele: ndarray) -> ndarray:
+    def rueckwaerts_durchlauf(self, vorhersagen: ndarray, ziele: ndarray):
         """
         Führt einen Rückwärtsdurchlauf durch alle Schichten, Aktivierungsfunktion und durch die Kostenfunktion des Netzwerk durch.
         Berechnet somit den Gradient für die Gewichte und Bias-Werte.

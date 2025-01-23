@@ -19,12 +19,12 @@ class AktivierungsFunktion:
         """
         raise NotImplementedError
 
-    def rueckwaerts(self, verlustgradient: ndarray) -> ndarray:
+    def rueckwaerts(self, verlust_gradient: ndarray) -> ndarray:
         """
         Führt die Rückwärtspropagation durch: Berechnet den Gradienten für die Eingaben.
 
         Parameter:
-            verlustgradient (ndarray): Der Gradient des Verlusts (Veränderung der aktivierten Ausgaben der aktuellen Schicht auf den Verlust) (dL/da).
+            verlust_gradient (ndarray): Der Gradient des Verlusts (Veränderung der aktivierten Ausgaben der aktuellen Schicht auf den Verlust) (dL/da).
 
         Rückgabewert:
             ndarray: Der berechnete Gradient für die Eingaben (Veränderung der rohen Ausgaben der aktuellen Schicht auf den Verlust) (dL/dz).
@@ -46,9 +46,9 @@ class ReLU(AktivierungsFunktion):
         ausgaben = np.maximum(0, eingaben)
         return ausgaben
 
-    def rueckwaerts(self, verlustgradient):
+    def rueckwaerts(self, verlust_gradient):
         # Gradient der Eingaben berechnen (dL/dz)
-        eingabe_gradient = verlustgradient * (self.gespeicherte_eingaben > 0)
+        eingabe_gradient = verlust_gradient * (self.gespeicherte_eingaben > 0)
         return eingabe_gradient
 
 
@@ -64,6 +64,6 @@ class Softmax(AktivierungsFunktion):
         ausgaben = exponierte_werte / summe
         return ausgaben
 
-    def rueckwaerts(self, verlustgradient):
+    def rueckwaerts(self, verlust_gradient):
         # Gibt die Gradienten direkt weiter (Softmax wird in Kombination mit Kreuzentropie verwendet)
-        return verlustgradient
+        return verlust_gradient

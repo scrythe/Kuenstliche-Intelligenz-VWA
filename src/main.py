@@ -37,14 +37,15 @@ def teste_netzwerk():
 
 
 def interaktives_testen():
-    bilder, _ = lade_daten.lade_test_daten()
+    bilder, beschriftungen = lade_daten.lade_test_daten()
     netzwerk = lade_daten.lade_netzwerk()
     while True:
         index = int(input("Zahl von 0 bis 9999: "))
         vorhersagen = netzwerk.vorwaerts_durchlauf(bilder[index])
         vorhersage = np.argmax(vorhersagen)
+        ziel = np.argmax(beschriftungen[index])
         plt.imshow(bilder[index].reshape(28, 28), cmap="Greys")
-        plt.title(vorhersage)
+        plt.title(f"Vorhersage: {vorhersage}, Eigentliche Zahl: {ziel}")
         plt.show()
 
 

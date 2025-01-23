@@ -42,7 +42,8 @@ class Netzwerk:
 
     def vorwaerts_durchlauf(self, eingaben: ndarray) -> ndarray:
         """
-        Führt einen Vorwärtsdurchlauf durch alle Schichten und Aktivierungsfunktionen des Netzwerkes durch: Berechnet berechnet die Ausgaben jeder der Schichten schritt für schrittweise.
+        Führt einen Vorwärtsdurchlauf durch alle Schichten und Aktivierungsfunktionen des Netzwerkes durch:
+        Berechnet berechnet die Ausgaben jeder der Schichten schritt für schrittweise.
 
         Parameter:
             eingaben (ndarray): Matrix der Eingaben.
@@ -123,7 +124,6 @@ class Netzwerk:
         """
         genauigkeiten = []
         verluste = []
-        anzahl_trainings_daten = len(ziele)
         for epoche in range(epochen):
             eingaben, ziele = self.daten_vermischen(eingaben, ziele)
             for start in range(0, len(eingaben), batch_groesse):

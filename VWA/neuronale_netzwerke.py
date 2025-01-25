@@ -54,20 +54,22 @@ ausgabe = np.dot(eingaben, transponierte_gewichte) + biases
 
 
 class Schicht:
-    def __init__(selbst, anzahl_eingaben, anzahl_neuronen):
-        selbst.gewichte = np.random.rand(anzahl_eingaben, anzahl_neuronen)
-        selbst.bias = np.zeros((1, anzahl_neuronen))
+    def __init__(self, anzahl_eingaben, anzahl_neuronen):
+        self.gewichte = 0.1 * np.random.randn(anzahl_eingaben, anzahl_neuronen)
+        self.bias = 0.1 * np.random.randn(1, anzahl_neuronen)
 
-    def vorwärts(selbst, eingaben):
-        selbst.ausgaben = np.dot(eingaben, selbst.gewichte) + selbst.bias
+    def vorwaerts(self, eingaben):
+        self.gespeicherte_eingaben = eingaben
+        ausgaben = np.dot(eingaben, self.gewichte) + self.bias
+        return ausgaben
 
 
 schicht1 = Schicht(3, 4)
 schicht2 = Schicht(4, 5)
 
-schicht1.vorwärts(eingaben)
-schicht2.vorwärts(schicht1.ausgaben)
-print(schicht2.ausgaben)
+ausgaben1 = schicht1.vorwaerts(eingaben)
+ausgaben2 = schicht2.vorwaerts(ausgaben1)
+print(ausgaben2)
 
 #####
 
@@ -83,33 +85,34 @@ max(0, ausgabe)
 
 
 class Sigmoid:
-    def vorwärts(selbst, eingaben):
-        selbst.ausgaben = 1 / (1 + np.exp(-eingaben))
+    def vorwaerts(self, eingaben):
+        self.gespeicherte_ausgaben = 1 / (1 + np.exp(-eingaben))
+        return self.gespeicherte_ausgaben
 
 
 schicht1 = Schicht(3, 4)
 aktivierung1 = Sigmoid()
 
-schicht1.vorwärts(eingaben)
-aktivierung1.vorwärts(schicht1.ausgaben)
-print(aktivierung1.ausgaben)
+rohe_ausgaben = schicht1.vorwaerts(eingaben)
+aktivierte_ausgaben = aktivierung1.vorwaerts(rohe_ausgaben)
+print(aktivierte_ausgaben)
 
 #####
 
 
 class ReLU:
-    def vorwärts(selbst, eingaben):
-        selbst.ausgaben = np.maximum(0, eingaben)
+    def vorwaerts(self, eingaben):
+        self.gespeicherte_eingaben = eingaben
+        ausgaben = np.maximum(0, eingaben)
+        return ausgaben
 
 
 #####
 
-#
-ausgaben = [0.8, 1.3, 3.1, 1.6]
-#
 
 import math
 
+ausgaben = [0.8, 1.3, 3.1, 1.6]
 exponierte_werte = []
 
 for ausgabe in ausgaben:
@@ -130,10 +133,53 @@ print(normalisierte_werte)
 
 
 ######
-
-
 class Softmax:
-    def vorwärts(selbst, eingaben):
+    def vorwaerts(self, eingaben):
+        # Normalisiert die Ausgaben in Wahrscheinlichkeiten
         exponierte_werte = np.exp(eingaben - np.max(eingaben, axis=1, keepdims=True))
-        normalisierte_basis = np.sum(exponierte_werte, axis=1, keepdims=True)
-        selbst.ausgaben = exponierte_werte / normalisierte_basis
+        summe = np.sum(exponierte_werte, axis=1, keepdims=True)
+        ausgaben = exponierte_werte / summe
+        return ausgaben
+
+
+#####
+from lade_daten import lade_test_daten
+import matplotlib.pyplot as plt
+
+
+class Netzwerk:
+    def __init__(
+        self,
+    ):
+        self.schichten = []
+        self.aktivierungen = []
+
+    def schicht_hinzufügen(self, schicht, aktivierung):
+        self.schichten.append(schicht)
+        self.aktivierungen.append(aktivierung)
+
+    def vorwaerts_durchlauf(self, eingaben):
+        for schicht, aktivierung in zip(self.schichten, self.aktivierungen):
+            rohe_ausgaben = schicht.vorwaerts(eingaben)
+            aktivierte_ausgaben = aktivierung.vorwaerts(rohe_ausgaben)
+            # Ausgaben der Schicht werden zu Eingaben für die nächste Schicht
+            eingaben = aktivierte_ausgaben
+        return aktivierte_ausgaben
+
+
+netzwerk = Netzwerk()
+netzwerk.schicht_hinzufügen(
+    Schicht(784, 20),  # Eingabeschicht → versteckte Schicht
+    ReLU(),  # Aktivierungsfunktion für die versteckte Schicht
+)
+netzwerk.schicht_hinzufügen(
+    Schicht(20, 10),  # Versteckte Schicht → Ausgabeschicht
+    Softmax(),  # Aktivierungsfunktion für die Ausgabeschicht
+)
+bilder, beschriftungen = lade_test_daten()
+index = int(input("Zahl von 0 bis 59999: "))
+bild = bilder[index]
+plt.imshow(bild.reshape(28, 28), cmap="Greys")
+ergebnisse = netzwerk.vorwaerts_durchlauf(bilder[index])
+plt.title(ergebnisse[0])
+plt.show()

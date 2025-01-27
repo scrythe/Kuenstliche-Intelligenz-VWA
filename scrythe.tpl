@@ -1,12 +1,11 @@
 {%- extends 'lab/index.html.j2' -%}
 
-
-{% block any_cell %}
-{% if 'hide_input' in cell['metadata'].get('tags', []): %}
-    {%- block output_group -%}
-        {{ super() }}
-    {%- endblock output_group %}
-{% else %}
+{%- block body %}
     {{ super() }}
-{% endif %}
-{% endblock any_cell %}
+    <script src="scrythe.js"></script>
+{%- endblock body %}
+
+{%- block header %}
+    {{ super() }}
+    <link rel="stylesheet" href="style.css">
+{%- endblock header %}

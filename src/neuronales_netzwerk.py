@@ -1,7 +1,7 @@
-from verlustfunktionen import VerlustFunktion
+from .verlustfunktionen import VerlustFunktion
 from numpy import ndarray
-from neuronale_schicht import Schicht
-from aktivierungsfunktionen import AktivierungsFunktion
+from .neuronale_schicht import Schicht
+from .aktivierungsfunktionen import AktivierungsFunktion
 import numpy as np
 
 
@@ -17,7 +17,7 @@ class Netzwerk:
 
     def __init__(
         self,
-        verlustfunktion: VerlustFunktion,
+        verlustfunktion: type[VerlustFunktion],
         lern_rate: float,
     ):
         """
@@ -111,7 +111,13 @@ class Netzwerk:
         np.random.shuffle(schlüssel)
         return (eingaben[schlüssel], ziele[schlüssel])
 
-    def SGD(self, eingaben: ndarray, ziele: ndarray, epochen, batch_groesse):
+    def SGD(
+        self,
+        eingaben: ndarray,
+        ziele: ndarray,
+        epochen,
+        batch_groesse,
+    ):
         """
         Trainieren des Netzwerkes über mehrere Epochen mit dem Optimierer Stochastic Gradient Descent
 

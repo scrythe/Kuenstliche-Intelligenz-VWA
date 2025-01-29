@@ -1,7 +1,5 @@
 import gzip
 import numpy as np
-import pickle
-from neuronales_netzwerk import Netzwerk
 
 
 def lade_bilder(datei):

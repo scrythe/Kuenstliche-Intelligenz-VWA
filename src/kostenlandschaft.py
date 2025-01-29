@@ -49,38 +49,10 @@ def zeichne_landschaft():
     )  # Kostenlandschaft
 
 
-def zeichne_ball_und_gradient():
-    ball_gewicht = -1
-    ball_bias = -1
-    verlust = berechne_kostenfunktion_auf_gewicht_bias(ball_gewicht, ball_bias)
-    ax.plot(
-        ball_gewicht,
-        ball_bias,
-        [verlust],
-        "ro",
-    )  # Roter Ball
-
-    # gradient = berechne_gradient(ball_gewicht, ball_bias)
-    # verlust2 = berechne_gradient(ball_gewicht - gradient[0], ball_bias - gradient[1])
-
-    # # ax.quiver(
-    # #     ball_gewicht,
-    # #     ball_bias,
-    # #     verlust,
-    # #     -gradient[0],
-    # #     -gradient[1],
-    # #     verlust2 - verlust,
-    # #     color="black",
-    # #     linewidth=2,
-    # #     label="Gradient",
-    # # )
-
-
 fig = plt.figure()
 ax: Axes3D = fig.add_subplot(111, projection="3d", computed_zorder=False)
 
 zeichne_landschaft()
-zeichne_ball_und_gradient()
 
 # Achsentitel
 ax.set_title("Kostenlandschaft in Bezug auf Gewichte und Bias")
@@ -88,6 +60,3 @@ ax.set_xlabel("Gewicht (w)")
 ax.set_ylabel("Bias (b)")
 ax.invert_yaxis()
 ax.set_zlabel("Verlust (L)")
-
-
-plt.show()

@@ -36,18 +36,18 @@ class VerlustFunktion:
         raise NotImplementedError
 
 
-class Kreuzentropie:
+class Kreuzentropie(VerlustFunktion):
     """
     Kreuzentropie-Verlustfunktion.
     """
 
     @staticmethod
-    def verlust(vorhersagen, ziele):
+    def verlust(vorhersagen: ndarray, ziele: ndarray) -> float:
         vorhersagen = np.clip(vorhersagen, 1e-7, 1 - 1e-7)
         return -np.mean(np.sum(ziele * np.log(vorhersagen), axis=1))
 
     @staticmethod
-    def rueckwaerts(vorhersagen, ziele):
+    def rueckwaerts(vorhersagen: ndarray, ziele: ndarray) -> ndarray:
         """
         Berechnet den Gradienten der Verlustfunktion in Kombination mit Softmax
 

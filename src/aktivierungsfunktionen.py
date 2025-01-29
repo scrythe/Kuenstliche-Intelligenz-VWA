@@ -32,6 +32,24 @@ class AktivierungsFunktion:
         raise NotImplementedError
 
 
+class Sigmoid(AktivierungsFunktion):
+    """
+    Sigmoid-Aktivierungsfunktion für die versteckten Schichten.
+
+    Attribute:
+        gespeicherte_ausgaben (dnarray): Die gespeicherte Eingabematrix (Batch von Eingabevektoren).
+    """
+
+    def vorwaerts(self, eingaben):
+        self.gespeicherte_ausgaben = 1 / (1 + np.exp(-eingaben))
+        return self.gespeicherte_ausgaben
+
+    def rueckwaerts(self, verlust_gradient):
+        gradient_sigmoid = self.gespeicherte_ausgaben * (1 - self.gespeicherte_ausgaben)
+        eingabe_gradient = verlust_gradient * gradient_sigmoid
+        return eingabe_gradient
+
+
 class ReLU(AktivierungsFunktion):
     """
     ReLU-Aktivierungsfunktion (Rectified Linear Unit) für die versteckten Schichten.
@@ -41,7 +59,6 @@ class ReLU(AktivierungsFunktion):
     """
 
     def vorwaerts(self, eingaben):
-
         self.gespeicherte_eingaben = eingaben
         ausgaben = np.maximum(0, eingaben)
         return ausgaben
@@ -50,6 +67,20 @@ class ReLU(AktivierungsFunktion):
         # Gradient der Eingaben berechnen (dL/dz)
         eingabe_gradient = verlust_gradient * (self.gespeicherte_eingaben > 0)
         return eingabe_gradient
+
+
+class Linear(AktivierungsFunktion):
+    """
+    Linear-Aktivierungsfunktion (Rectified Linear Unit) für die Ausgabeschicht.
+    """
+
+    def vorwaerts(self, eingaben):
+        # Direkt weitergegeben
+        return eingaben
+
+    def rueckwaerts(self, verlust_gradient):
+        # Direkt weitergegeben
+        return verlust_gradient
 
 
 class Softmax(AktivierungsFunktion):

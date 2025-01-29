@@ -1,7 +1,7 @@
 import numpy as np
-from netzwerk import Netzwerk
+from neuronales_netzwerk import Netzwerk
 from neuronale_schicht import Schicht
-from aktivierungsfunktionen import ReLU, Softmax
+from aktivierungsfunktionen import ReLU, Softmax, Sigmoid
 from verlustfunktionen import Kreuzentropie
 import lade_daten
 import matplotlib.pyplot as plt
@@ -50,6 +50,6 @@ def interaktives_testen():
 
 
 if __name__ == "__main__":
-    # trainiere_netzwerk()
+    trainiere_netzwerk()
     # teste_netzwerk()
-    interaktives_testen()
+    # interaktives_testen()

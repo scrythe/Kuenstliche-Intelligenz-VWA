@@ -31,14 +31,14 @@ class Netzwerk:
         self.verlustfunktion = verlustfunktion
         self.lern_rate = lern_rate
         self.schichten: list[Schicht] = []
-        self.aktivierungen: list[AktivierungsFunktion] = []
+        self.aktivierungsfunktionen: list[AktivierungsFunktion] = []
 
     def schicht_hinzufügen(self, schicht: Schicht, aktivierung: AktivierungsFunktion):
         """
         Fügt Schicht mit der zuständigen Aktivierungsfunktion hinzu
         """
         self.schichten.append(schicht)
-        self.aktivierungen.append(aktivierung)
+        self.aktivierungsfunktionen.append(aktivierung)
 
     def vorwaerts_durchlauf(self, eingaben: ndarray) -> ndarray:
         """
@@ -51,7 +51,7 @@ class Netzwerk:
         Rückgabewert:
             ndarray: Matrix der vorhergesagten Ausgaben
         """
-        for schicht, aktivierung in zip(self.schichten, self.aktivierungen):
+        for schicht, aktivierung in zip(self.schichten, self.aktivierungsfunktionen):
             rohe_ausgaben = schicht.vorwaerts(eingaben)
             aktivierte_ausgaben = aktivierung.vorwaerts(rohe_ausgaben)
             # Ausgaben der Schicht werden zu Eingaben für die nächste Schicht
@@ -71,7 +71,7 @@ class Netzwerk:
         gradient = self.verlustfunktion.rueckwaerts(vorhersagen, ziele)
         # Rückwärts berechnet, von Ausgabeschicht zu Eingabeschicht
         for schicht, aktivierung in zip(
-            reversed(self.schichten), reversed(self.aktivierungen)
+            reversed(self.schichten), reversed(self.aktivierungsfunktionen)
         ):
             # Veränderung der rohen Ausgaben der aktuellen Schicht auf den Verlust) (dL/dz).
             gradient = aktivierung.rueckwaerts(gradient)

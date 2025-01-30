@@ -8,3 +8,10 @@ figure {
     content: counter(page);
   }
 }
+
+@media print {
+  .jp-Cell-inputWrapper,
+  .jp-Cell-outputWrapper {
+    break-inside: avoid-page;
+  }
+}

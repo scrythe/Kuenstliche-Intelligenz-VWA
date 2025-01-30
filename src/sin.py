@@ -1,10 +1,7 @@
-import numpy as np
-from .neuronales_netzwerk import Netzwerk
-from .neuronale_schicht import Schicht
-from .aktivierungsfunktionen import ReLU, Linear
-from .verlustfunktionen import MittlererQuadratischerFehler
-import matplotlib.pyplot as plt
-from matplotlib import animation
+from neuronales_netzwerk.netzwerk import Netzwerk
+from neuronales_netzwerk.schicht import Schicht
+from neuronales_netzwerk.aktivierungsfunktionen import ReLU, Linear
+from neuronales_netzwerk.verlustfunktionen import MittlererQuadratischerFehler
 from numpy import ndarray
 
 
@@ -36,11 +33,7 @@ class Netzwerk_Regressiv(Netzwerk):
         return geschichte
 
 
-def trainiere_netzwerk():
-    eingaben = np.arange(0, 5, 0.1)
-    eingaben = eingaben.reshape(len(eingaben), 1)
-    ziele = np.sin(eingaben)
-
+def trainiere_netzwerk(eingaben, ziele):
     netzwerk = Netzwerk_Regressiv(MittlererQuadratischerFehler, 0.1)
     netzwerk.schicht_hinzufügen(
         Schicht(1, 40),  # Eingabeschicht → versteckte Schicht
@@ -51,25 +44,5 @@ def trainiere_netzwerk():
         Linear(),  # Aktivierungsfunktion für die Ausgabeschicht
     )
     geschichte = netzwerk.gradient_descent(eingaben, ziele)
+    return netzwerk,geschichte
 
-    fig, ax = plt.subplots(figsize=(10, 5))
-
-    plt.plot(eingaben, ziele, label="Wahre Funktion")
-    (linie,) = ax.plot([], [], label="Neuronales Netzwerk", color="orange")
-
-    framge_range = range(0, len(geschichte), 10)
-
-    def init():
-        linie.set_xdata(eingaben)
-        return (linie,)
-
-    def update(epoche):
-        linie.set_ydata(geschichte[epoche])
-        ax.set_title(f"Epoche {epoche}")
-        return (linie,)
-
-    ani = animation.FuncAnimation(
-        fig, update, frames=framge_range, init_func=init, interval=100, repeat=False
-    )
-
-    plt.legend()

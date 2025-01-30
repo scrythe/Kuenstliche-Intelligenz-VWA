@@ -1,9 +1,9 @@
 import numpy as np
-from neuronales_netzwerk import Netzwerk
-from neuronale_schicht import Schicht
-from aktivierungsfunktionen import ReLU, Softmax, Sigmoid
-from verlustfunktionen import Kreuzentropie
-import lade_daten
+from neuronales_netzwerk.netzwerk import Netzwerk
+from neuronales_netzwerk.schicht import Schicht
+from neuronales_netzwerk.aktivierungsfunktionen import ReLU, Softmax, Sigmoid
+from neuronales_netzwerk.verlustfunktionen import Kreuzentropie
+from daten import lade_daten
 import matplotlib.pyplot as plt
 
 
@@ -18,7 +18,7 @@ def trainiere_netzwerk():
         Schicht(20, 10),  # Versteckte Schicht → Ausgabeschicht
         Softmax(),  # Aktivierungsfunktion für die Ausgabeschicht
     )
-    netzwerk.SGD(bilder, labels, epochen=200, batch_groesse=64)
+    netzwerk.SGD(bilder, labels, epochen=5, batch_groesse=64)
     lade_daten.speicher_netzwerk(netzwerk)
 
 

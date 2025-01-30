@@ -1,8 +1,6 @@
 # Zeichne Netzwerk
 
 import matplotlib.pyplot as plt
-from io import BytesIO
-
 
 def neuron_x_pos(schicht, radius, horizont_abstand):
     x_links_offset = radius + horizont_abstand / 6
@@ -118,8 +116,3 @@ def zeichne_netzwerk(groesse, y_ratio, schichten):
         y_laenge,
         y_text_offset,
     )
-    bild = BytesIO()
-    plt.savefig(bild, format="png")
-    bild.seek(0)
-    plt.close()
-    return bild

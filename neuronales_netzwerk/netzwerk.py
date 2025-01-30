@@ -1,6 +1,6 @@
 from .verlustfunktionen import VerlustFunktion
 from numpy import ndarray
-from .neuronale_schicht import Schicht
+from .schicht import Schicht
 from .aktivierungsfunktionen import AktivierungsFunktion
 import numpy as np
 

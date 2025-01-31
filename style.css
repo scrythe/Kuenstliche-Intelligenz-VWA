@@ -2,6 +2,9 @@ figure {
   margin: 0;
   padding: 5px;
 }
+.jp-Cell p {
+  text-align: justify;
+}
 
 @page {
   @bottom-right {
@@ -13,5 +16,9 @@ figure {
   .jp-Cell-inputWrapper,
   .jp-Cell-outputWrapper {
     break-inside: avoid-page;
+  }
+
+  h1 {
+    page-break-before: always;
   }
 }

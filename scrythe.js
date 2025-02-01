@@ -41,3 +41,8 @@ document.querySelectorAll('.jp-RenderedMarkdown').forEach((cell) => {
     h3.prepend(h1_number, '.', h2_number, '.', h3_number, ' ');
   }
 });
+
+document.querySelectorAll('h1').forEach((cell) => {
+  if (!cell.textContent.includes('Literaturverzeichnis')) return;
+  console.log(cell);
+});

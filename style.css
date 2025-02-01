@@ -2,8 +2,16 @@ figure {
   margin: 0;
   padding: 5px;
 }
+
 .jp-Cell p {
   text-align: justify;
+}
+
+.jp-Cell:has(#Literaturverzeichnis) p {
+  text-align: left;
+  a {
+    color: var(--jp-content-font-color1);
+  }
 }
 
 @page {

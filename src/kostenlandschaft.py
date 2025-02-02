@@ -14,8 +14,8 @@ ziele = f(eingaben)
 
 def berechne_kostenfunktion_auf_gewicht_bias(gewichte, bias):
     vorhersagen = gewichte * eingaben + bias
-    verlust = MittlererQuadratischerFehler.verlust(vorhersagen, ziele)
-    return verlust
+    kosten = MittlererQuadratischerFehler.kosten(vorhersagen, ziele)
+    return kosten
 
 
 def berechne_gradient(gewicht, bias):

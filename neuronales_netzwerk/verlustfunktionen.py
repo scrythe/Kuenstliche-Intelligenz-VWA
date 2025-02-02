@@ -8,7 +8,7 @@ class VerlustFunktion:
     """
 
     @staticmethod
-    def verlust(vorhersagen: ndarray, ziele: ndarray) -> float:
+    def kosten(vorhersagen: ndarray, ziele: ndarray) -> float:
         """
         Berechnet den Mittelwert der Verluste.
 
@@ -42,9 +42,11 @@ class Kreuzentropie(VerlustFunktion):
     """
 
     @staticmethod
-    def verlust(vorhersagen: ndarray, ziele: ndarray) -> float:
+    def kosten(vorhersagen: ndarray, ziele: ndarray) -> float:
         vorhersagen = np.clip(vorhersagen, 1e-7, 1 - 1e-7)
-        return -np.mean(np.sum(ziele * np.log(vorhersagen), axis=1))
+        verluste = np.sum(ziele * np.log(vorhersagen), axis=1)
+        kosten = -np.mean(verluste)
+        return kosten
 
     @staticmethod
     def rueckwaerts(vorhersagen: ndarray, ziele: ndarray) -> ndarray:
@@ -69,7 +71,9 @@ class MittlererQuadratischerFehler(VerlustFunktion):
     @staticmethod
     def verlust(vorhersagen: ndarray, ziele: ndarray) -> float:
         # Berechnet den mittleren quadratischen Fehler (MSE).
-        return np.mean(np.square(vorhersagen - ziele))
+        verluste = np.square(vorhersagen - ziele)
+        kosten = np.mean(verluste)
+        return kosten
 
     @staticmethod
     def rueckwaerts(vorhersagen: ndarray, ziele: ndarray) -> ndarray:

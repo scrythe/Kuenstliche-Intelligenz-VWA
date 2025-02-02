@@ -128,7 +128,7 @@ class Netzwerk:
             batch_groesse (int): Größe des Batches / Menge an Trainingsdaten pro Batch.
         """
         genauigkeiten = []
-        verluste = []
+        epochen_kosten = []
         for epoche in range(epochen):
             eingaben, ziele = self.daten_vermischen(eingaben, ziele)
             for start in range(0, len(eingaben), batch_groesse):
@@ -140,8 +140,8 @@ class Netzwerk:
                 vorhersagen = self.vorwaerts_durchlauf(batch_eingaben)
 
                 # Berechne den Verlust (Fehler des Models)
-                verlust = self.verlustfunktion.verlust(vorhersagen, batch_ziele)
-                verluste.append(verlust)
+                kosten = self.verlustfunktion.kosten(vorhersagen, batch_ziele)
+                epochen_kosten.append(kosten)
 
                 # Berechne die Genauigkeit des Modells (Wie viele korrekte Antworten)
                 genauigkeit = self.berechne_genauigkeit(vorhersagen, batch_ziele)
@@ -157,7 +157,7 @@ class Netzwerk:
                     # Update der Bias-Wert
                     schicht.bias -= self.lern_rate * schicht.bias_gradient
 
-            # Ausgabe des aktuellen Verlustes nach jeder Epoche
+            # Ausgabe der aktuellen Kosten nach jeder Epoche
             print(
-                f"Epoche {epoche + 1}, Verlust: {np.mean(verluste):.4f}, Genauigkeit: {np.mean(genauigkeiten):.4f}"
+                f"Epoche {epoche + 1}, Kosten: {np.mean(epochen_kosten):.4f}, Genauigkeit: {np.mean(genauigkeiten):.4f}"
             )

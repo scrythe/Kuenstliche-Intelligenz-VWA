@@ -26,7 +26,7 @@ def teste_netzwerk():
     bilder, beschriftungen = lade_daten.lade_test_daten()
     netzwerk = lade_daten.lade_netzwerk()
     vorhersagen = netzwerk.vorwaerts_durchlauf(bilder)
-    kost = netzwerk.verlustfunktion.verlust(vorhersagen, beschriftungen)
+    kost = netzwerk.verlustfunktion.kosten(vorhersagen, beschriftungen)
     genauigkeit = netzwerk.berechne_genauigkeit(vorhersagen, beschriftungen)
     print(
         "Genauigkeit: ",

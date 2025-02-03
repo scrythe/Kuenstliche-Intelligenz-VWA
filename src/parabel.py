@@ -1,7 +1,12 @@
+import sys
+from os import path
+
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
-from verlustfunktionen import MittlererQuadratischerFehler
+from neuronales_netzwerk.verlustfunktionen import MittlererQuadratischerFehler
 
 
 class Netzwerk:

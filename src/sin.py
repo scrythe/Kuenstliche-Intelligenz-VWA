@@ -18,7 +18,7 @@ class Netzwerk_Regressiv(Netzwerk):
             vorhersagen = self.vorwaerts_durchlauf(eingaben)
             geschichte.append(vorhersagen)
 
-            kosten = self.verlustfunktion.verlust(vorhersagen, ziele)
+            kosten = self.verlustfunktion.kosten(vorhersagen, ziele)
 
             # Rückwärtsdurchlauf: Berechnung der Gradienten
             self.rueckwaerts_durchlauf(vorhersagen, ziele)
@@ -44,5 +44,4 @@ def trainiere_netzwerk(eingaben, ziele):
         Linear(),  # Aktivierungsfunktion für die Ausgabeschicht
     )
     geschichte = netzwerk.gradient_descent(eingaben, ziele)
-    return netzwerk,geschichte
-
+    return netzwerk, geschichte

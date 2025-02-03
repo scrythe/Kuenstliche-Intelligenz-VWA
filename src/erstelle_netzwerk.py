@@ -2,6 +2,7 @@
 
 import matplotlib.pyplot as plt
 
+
 def neuron_x_pos(schicht, radius, horizont_abstand):
     x_links_offset = radius + horizont_abstand / 6
     x_position = schicht * horizont_abstand + x_links_offset

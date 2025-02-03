@@ -69,7 +69,7 @@ class MittlererQuadratischerFehler(VerlustFunktion):
     """
 
     @staticmethod
-    def verlust(vorhersagen: ndarray, ziele: ndarray) -> float:
+    def kosten(vorhersagen: ndarray, ziele: ndarray) -> float:
         # Berechnet den mittleren quadratischen Fehler (MSE).
         verluste = np.square(vorhersagen - ziele)
         kosten = np.mean(verluste)

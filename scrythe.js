@@ -46,3 +46,9 @@ document.querySelectorAll('h1').forEach((cell) => {
   if (!cell.textContent.includes('Literaturverzeichnis')) return;
   console.log(cell);
 });
+
+document.querySelectorAll('.jp-RenderedMarkdown p').forEach((cell) => {
+  const regex = /"(.*?)"/g;
+  const substitue = '„$1“';
+  cell.textContent = cell.textContent.replace(regex, substitue);
+});

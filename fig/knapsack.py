@@ -18,18 +18,29 @@ item_list = [
 ]
 
 
-class Individual:
-    def __init__(self, mass_limit):
-        self.create_random_item_bits()
-        self.mass_limit = mass_limit
+def generate_item_list(length):
+    items = []
+    for i in range(length):
+        items.append(Item(i, i, i))
+    return items
 
-    def create_random_item_bits(self):
-        self.item_bits = []
+
+item_list = generate_item_list(10)
+
+
+class Individual:
+    def __init__(self, item_bits):
+        self.item_bits = item_bits
+
+    @staticmethod
+    def create_random_individual():
+        random_item_bits = []
         for _ in item_list:  # für jedes Element in der Gegenstände Liste
             bit = random.choice([0, 1])  # zufällig 1 oder 0 wählen
-            self.item_bits.append(bit)
+            random_item_bits.append(bit)
+        return Individual(random_item_bits)
 
-    def calculate_fitness(self):
+    def calculate_fitness(self, mass_limit):
         total_mass = 0
         total_value = 0
         # Gehe jeden Gegenstand des Individuums durch
@@ -38,7 +49,7 @@ class Individual:
                 total_mass += item.mass
                 total_value += item.value
 
-        if total_mass > self.mass_limit:
+        if total_mass > mass_limit:
             self.fitness_value = 0
             return
 
@@ -52,24 +63,19 @@ class Individual:
                 )
 
 
-REPRODUCTION_RATE = 0.6
-CROSS_OVER_RATE = 0.2
-MUTATION_RATE = 0.1
-
-
 class Population:
-    def __init__(self, population_size, mass_limit):
+    def __init__(self, population_size):
         self.population_size = population_size
-        self.create_initial_population(mass_limit)
+        self.create_initial_population()
 
-    def calculate_fitness(self):
+    def calculate_fitness(self, mass_limit):
         for individual in self.population:
-            individual.calculate_fitness()
+            individual.calculate_fitness(mass_limit)
 
-    def create_initial_population(self, mass_limit):
+    def create_initial_population(self):
         self.population = []
         while population_size > len(self.population):
-            individual = Individual(mass_limit)
+            individual = Individual.create_random_individual()
             self.population.append(individual)
 
     def print_population(self):
@@ -78,39 +84,39 @@ class Population:
 
     def create_new_population(self):
         new_population = []
-        best_individual = copy.deepcopy(self.population[0])
-        new_population.append(best_individual)
+        best_individuals = self.population[0:2]
+        new_population.extend(best_individuals)
         while population_size > len(new_population):
             parent1, parent2 = selection(self.population)
-            if CROSS_OVER_RATE > random.random():
-                crossover(parent1, parent2)
 
-            if MUTATION_RATE > random.random():
-                mutation(parent1)
-            if MUTATION_RATE > random.random():
-                mutation(parent2)
+            child1, child2 = crossover_parents(parent1, parent2)
 
-            new_population.append(parent1)
-            new_population.append(parent2)
+            mutatate_child(child1)
+            mutatate_child(child2)
+
+            new_population.append(child1)
+            new_population.append(child2)
 
         return new_population
 
-    def start(self):
-        self.calculate_fitness()
+    def start(self, mass_limit):
+        self.calculate_fitness(mass_limit)
         for _ in range(500):
             self.population = self.create_new_population()
-            self.calculate_fitness()
+            self.calculate_fitness(mass_limit)
 
             self.population.sort(
                 reverse=True, key=lambda individual: individual.fitness_value
             )
 
             best_individual = self.population[0]
-            print(best_individual.fitness_value)
+
+        print(best_individual.fitness_value)
+        print(best_individual.item_bits)
 
 
-population_size = 50
-mass_limit = 10
+population_size = 20
+mass_limit = 3000
 
 
 def tournament(enemy1, enemy2):
@@ -127,26 +133,27 @@ def selection(population):
     return [winner1, winner2]
 
 
-def crossover(parent1, parent2):
+def crossover_parents(parent1, parent2):
     bits_amount = len(parent1.item_bits)
     half_amount = int(bits_amount / 2)
 
     # Erste Hälfte von Elternteil 1 plus zweite Hälfte von Elternteil 2
-    temp1_bits = parent1.item_bits[:half_amount] + parent2.item_bits[half_amount:]
+    child1_bits = parent1.item_bits[:half_amount] + parent2.item_bits[half_amount:]
 
     # Erste Hälfte von Elternteil 2 plus zweite Hälfte von Elternteil 1
-    temp2_bits = parent2.item_bits[:half_amount] + parent1.item_bits[half_amount:]
+    child2_bits = parent2.item_bits[:half_amount] + parent1.item_bits[half_amount:]
 
-    parent1.item_bits = temp1_bits
-    parent2.item_bits = temp2_bits
+    child1 = Individual(child1_bits)
+    child2 = Individual(child2_bits)
+    return (child1, child2)
 
 
-def mutation(individual):
+def mutatate_child(individual):
     bits_amount = len(individual.item_bits)
     random_bit = random.randrange(bits_amount)
     individual.item_bits[random_bit] = (
         1 - individual.item_bits[random_bit]
-    )  # Wenn 1, wird zu 0 und umgekehrt
+    )  # 1 wird zu null un umgekehrt
 
 
-Population(population_size, mass_limit).start()
+Population(population_size).start(mass_limit)

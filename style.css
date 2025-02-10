@@ -30,3 +30,12 @@ figure {
     page-break-before: always;
   }
 }
+
+.jp-InputArea-editor {
+  background-color: unset;
+  border: unset;
+
+  .highlight {
+    background-color: unset;
+  }
+}

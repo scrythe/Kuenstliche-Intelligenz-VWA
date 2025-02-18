@@ -15,6 +15,11 @@ figure {
 }
 
 @page {
+  font-family: var(--jp-content-font-family);
+  /* @top-center {
+    content: 'Magomed Alimkhanov';
+  } */
+
   @bottom-right {
     content: counter(page);
   }
@@ -28,6 +33,79 @@ figure {
 
   h1 {
     page-break-before: always;
+  }
+}
+
+a.pictures {
+  display: grid;
+  grid-template-columns: auto max-content;
+
+  .page {
+    display: unset !important;
+    font-variant-numeric: tabular-nums;
+    min-width: 2ch;
+    text-align: right;
+  }
+
+  .label {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .label::after {
+    position: absolute;
+    padding-left: 0.25ch;
+    content: ' . . . . . . . . . . . . . . . . . . . '
+      '. . . . . . . . . . . . . . . . . . . . . . . '
+      '. . . . . . . . . . . . . . . . . . . . . . . '
+      '. . . . . . . . . . . . . . . . . . . . . . . '
+      '. . . . . . . . . . . . . . . . . . . . . . . '
+      '. . . . . . . . . . . . . . . . . . . . . . . '
+      '. . . . . . . . . . . . . . . . . . . . . . . '
+      '. . . . . . . . . . . . . . . . . . . . . . . '
+      '. . . . . . . . . . . . . . . . . . . . . . . '
+      '. . . . . . . . . . . . . . . . . . . . . . . '
+      '. . . . . . . . . . . . . . . . . . . . . . . '
+      '. . . . . . . . . . . . . . . . . . . . . . . ';
+    text-align: right;
+  }
+}
+
+#toc {
+  a {
+    color: var(--jp-content-font-color1);
+    display: grid;
+    grid-template-columns: min-content auto max-content;
+    margin-block-start: 1em;
+
+    .page {
+      font-variant-numeric: tabular-nums;
+      min-width: 2ch;
+      text-align: right;
+    }
+
+    .title {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .title::after {
+      position: absolute;
+      padding-left: 0.25ch;
+      content: ' . . . . . . . . . . . . . . . . . . . '
+        '. . . . . . . . . . . . . . . . . . . . . . . '
+        '. . . . . . . . . . . . . . . . . . . . . . . '
+        '. . . . . . . . . . . . . . . . . . . . . . . '
+        '. . . . . . . . . . . . . . . . . . . . . . . '
+        '. . . . . . . . . . . . . . . . . . . . . . . '
+        '. . . . . . . . . . . . . . . . . . . . . . . '
+        '. . . . . . . . . . . . . . . . . . . . . . . '
+        '. . . . . . . . . . . . . . . . . . . . . . . '
+        '. . . . . . . . . . . . . . . . . . . . . . . '
+        '. . . . . . . . . . . . . . . . . . . . . . . '
+        '. . . . . . . . . . . . . . . . . . . . . . . ';
+      text-align: right;
+    }
   }
 }
 

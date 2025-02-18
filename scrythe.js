@@ -16,6 +16,7 @@ document.querySelectorAll('.jp-OutputPrompt').forEach((cell) => {
   cell.remove();
 });
 
+toc = [];
 h1_number = 0;
 h2_number = 0;
 h3_number = 0;
@@ -42,13 +43,49 @@ document.querySelectorAll('.jp-RenderedMarkdown').forEach((cell) => {
   }
 });
 
-document.querySelectorAll('h1').forEach((cell) => {
-  if (!cell.textContent.includes('Literaturverzeichnis')) return;
-  console.log(cell);
-});
-
 document.querySelectorAll('.jp-RenderedMarkdown p').forEach((cell) => {
+  if (cell.querySelector('a')) return;
   const regex = /"(.*?)"/g;
   const substitue = '„$1“';
   cell.textContent = cell.textContent.replace(regex, substitue);
 });
+
+function generateTOC() {
+  const tocElement = document.querySelector('#toc');
+  const tocTitle = document.createElement('h1');
+  tocTitle.innerHTML = 'Inhaltsverzeichnis';
+  tocElement.append(tocTitle);
+
+  const headings = Array.from(document.querySelectorAll('h1, h2, h3'));
+  headings.splice(0, 1);
+  headings.forEach((heading) => {
+    // const tocItem = document.createElement('li');
+    const tocLink = document.createElement('a');
+    const tocNumber = document.createElement('span');
+    const tocTitle = document.createElement('span');
+    const tocPage = document.createElement('span');
+
+    const headingNumber = heading.innerText.split(' ')[0];
+    const titleText = heading.innerText.substring(headingNumber.length);
+    const headingLevel = parseInt(heading.tagName[1]);
+    const indent = headingLevel - 1;
+
+    tocLink.href = '#' + heading.id;
+    tocNumber.innerHTML = headingNumber;
+    tocTitle.innerHTML = titleText;
+    tocPage.innerHTML = 'X';
+    tocTitle.className = 'title';
+    tocPage.className = 'page';
+
+    tocNumber.style.paddingRight = `2em`;
+    tocLink.style.paddingLeft = `${indent}em`;
+
+    tocLink.append(tocNumber);
+    tocLink.append(tocTitle);
+    tocLink.append(tocPage);
+
+    tocElement.append(tocLink);
+  });
+}
+
+generateTOC();

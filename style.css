@@ -25,52 +25,7 @@ figure {
   }
 }
 
-@media print {
-  .jp-Cell-inputWrapper,
-  .jp-Cell-outputWrapper {
-    break-inside: avoid-page;
-  }
-
-  h1 {
-    page-break-before: always;
-  }
-}
-
-a.pictures {
-  display: grid;
-  grid-template-columns: auto max-content;
-
-  .page {
-    display: unset !important;
-    font-variant-numeric: tabular-nums;
-    min-width: 2ch;
-    text-align: right;
-  }
-
-  .label {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .label::after {
-    position: absolute;
-    padding-left: 0.25ch;
-    content: ' . . . . . . . . . . . . . . . . . . . '
-      '. . . . . . . . . . . . . . . . . . . . . . . '
-      '. . . . . . . . . . . . . . . . . . . . . . . '
-      '. . . . . . . . . . . . . . . . . . . . . . . '
-      '. . . . . . . . . . . . . . . . . . . . . . . '
-      '. . . . . . . . . . . . . . . . . . . . . . . '
-      '. . . . . . . . . . . . . . . . . . . . . . . '
-      '. . . . . . . . . . . . . . . . . . . . . . . '
-      '. . . . . . . . . . . . . . . . . . . . . . . '
-      '. . . . . . . . . . . . . . . . . . . . . . . '
-      '. . . . . . . . . . . . . . . . . . . . . . . '
-      '. . . . . . . . . . . . . . . . . . . . . . . ';
-    text-align: right;
-  }
-}
-
+#abb,
 #toc {
   a {
     color: var(--jp-content-font-color1);
@@ -109,11 +64,27 @@ a.pictures {
   }
 }
 
+#abb a {
+  grid-template-columns: auto max-content;
+  margin-block-start: unset;
+}
+
 .jp-InputArea-editor {
   background-color: unset;
   border: unset;
 
   .highlight {
     background-color: unset;
+  }
+}
+
+@media print {
+  .jp-Cell-inputWrapper,
+  .jp-Cell-outputWrapper {
+    break-inside: avoid-page;
+  }
+
+  h1 {
+    page-break-before: always;
   }
 }

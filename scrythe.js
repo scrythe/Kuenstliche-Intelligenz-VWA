@@ -66,6 +66,7 @@ function generateAbb(abb_advanced = []) {
   const lastH1 = h1s[h1s.length - 1];
   const lastH1Number = lastH1.innerText.split(' ')[0];
   abbTitle.innerHTML = parseInt(lastH1Number) + 1 + ' Abbildungsverzeichnis';
+  abbTitle.id = 'Abbildungsverzeichnis';
   abbElement.append(abbTitle);
 
   const abbs = Array.from(document.querySelectorAll('figcaption'));

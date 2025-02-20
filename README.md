@@ -13,7 +13,7 @@ jupyter lab
 
 jupyter nbconvert --to html --template .\scrythe.tpl .\Künstliche_Intelligenz.ipynb
 
-# Convert to Markdown
+# Convert to Markdown with no pictures
 
 jupyter nbconvert --to markdown .\Künstliche_Intelligenz.ipynb
 

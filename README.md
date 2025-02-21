@@ -20,3 +20,7 @@ jupyter nbconvert --to markdown .\Künstliche_Intelligenz.ipynb
 # My Binder
 
 https://mybinder.org/v2/gh/scrythe/Kuenstliche-Intelligenz-VWA/main?urlpath=%2Fdoc%2Ftree%2FK%C3%BCnstliche_Intelligenz.ipynb
+
+# Convert notebook to pdf
+
+python create_html_and_pdf

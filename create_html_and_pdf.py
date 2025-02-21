@@ -15,6 +15,7 @@ subprocess.run(
         "./scrythe.tpl",
         "./Künstliche_Intelligenz.ipynb",
     ],
+    check=True,
 )
 
 create_pdf.main.create_pdf()

@@ -28,6 +28,9 @@ function addNumberToHeaders() {
   document.querySelectorAll('.jp-RenderedMarkdown').forEach((cell) => {
     h1 = cell.querySelector('h1');
     if (h1) {
+      if (h1.innerText == 'Abstract') {
+        return;
+      }
       h1_number += 1;
       h2_number = 0;
       h3_number = 0;
@@ -79,7 +82,8 @@ function generateAbb(abb_advanced = []) {
     abbLink.href = '#' + abb.id;
     abbTitle.innerHTML = abb.innerText;
     if (abb_advanced.length) {
-      abbPage.innerHTML = abb_advanced[index].page;
+      const page = abb_advanced[index][1];
+      abbPage.innerHTML = page;
     }
     abbTitle.className = 'title';
     abbPage.className = 'page';
@@ -89,7 +93,6 @@ function generateAbb(abb_advanced = []) {
 
     abbElement.append(abbLink);
   });
-  console.log(toc);
   return abbKeywords;
 }
 
@@ -101,7 +104,7 @@ function generateTOC(toc = []) {
   tocElement.append(tocTitle);
 
   const headings = Array.from(document.querySelectorAll('h1, h2, h3'));
-  headings.splice(0, 1);
+  headings.splice(1, 1);
   const headerKeywords = headings.map((heading) => heading.innerText);
   headings.forEach((heading, index) => {
     const tocLink = document.createElement('a');
@@ -109,22 +112,30 @@ function generateTOC(toc = []) {
     const tocTitle = document.createElement('span');
     const tocPage = document.createElement('span');
 
-    const headingNumber = heading.innerText.split(' ')[0];
-    const titleText = heading.innerText.substring(headingNumber.length);
+    let headingNumber = heading.innerText.split(' ')[0];
+    let titleText = heading.innerText.substring(headingNumber.length);
     const headingLevel = parseInt(heading.tagName[1]);
     const indent = headingLevel - 1;
+
+    tocNumber.style.paddingRight = `2em`;
+    tocLink.style.paddingLeft = `${indent}em`;
+
+    if (!titleText) {
+      // when Abstract (no number)
+      titleText = headingNumber;
+      headingNumber = '';
+      tocNumber.style.paddingRight = 'unset';
+    }
 
     tocLink.href = '#' + heading.id;
     tocNumber.innerHTML = headingNumber;
     tocTitle.innerHTML = titleText;
     if (toc.length) {
-      tocPage.innerHTML = toc[index].page;
+      const page = toc[index][1];
+      tocPage.innerHTML = page;
     }
     tocTitle.className = 'title';
     tocPage.className = 'page';
-
-    tocNumber.style.paddingRight = `2em`;
-    tocLink.style.paddingLeft = `${indent}em`;
 
     tocLink.append(tocNumber);
     tocLink.append(tocTitle);
@@ -132,7 +143,6 @@ function generateTOC(toc = []) {
 
     tocElement.append(tocLink);
   });
-  console.log(toc);
   return headerKeywords;
 }
 

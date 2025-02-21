@@ -1,53 +1,46 @@
 from playwright.sync_api import sync_playwright
-import fitz  # type: ignore
+import pymupdf  # type: ignore
 from pikepdf import Pdf, OutlineItem
 import os
 
 
-def extract_headers(header_keywords):
-    headers = []
-    doc = fitz.open("temp.pdf")
+def extract_keywords(keywords):
+    results = []
 
-    for page_num in range(doc.page_count):  # Use `doc.page_count` directly
-        page = doc.load_page(page_num)
-        spans = [
-            span
-            for block in page.get_text("dict")["blocks"]
-            if block["type"] == 0  # Text block
-            for line in block["lines"]
-            for span in line["spans"]
-        ]
-
-        headers.extend(
-            {
-                "text": span["text"].strip(),
-                "page": page_num + 1,
-                "bbox": span["bbox"],
-            }
-            for span in spans
-            if any(header in span["text"] for header in header_keywords)
-        )
+    current_keyword_index = 0
+    doc = pymupdf.open("temp.pdf")
+    for page in doc:
+        while True:
+            if current_keyword_index >= len(keywords):
+                break
+            current_keyword = keywords[current_keyword_index]
+            rect = page.search_for(current_keyword)
+            if len(rect):
+                current_keyword_index += 1
+                result = (current_keyword, page.number + 1, rect[0])
+                results.append(result)
+                continue
+            break
     doc.close()
-    return headers
+    return results
 
 
 def add_bookmarks(headers):
-    doc = fitz.open("temp.pdf")
+    doc = pymupdf.open("temp.pdf")
     page = doc.load_page(0)
-    page_height = page.rect[2]
+    page_height = page.rect.height
     doc.close()
 
     pdf = Pdf.open("temp.pdf")
     with pdf.open_outline() as outline:
         outline_hirachy = {}
         for header in headers:
-            text = header["text"]
+            text = header[0]
             level = text.count(".")
-            page = header["page"]
-            y = header["bbox"][1]
+            page = header[1]
+            rect = header[2]
 
-            # page_height = page.mediabox[3]  # Get the height of the page
-            oi = OutlineItem(text, page - 1, "XYZ", top=page_height - y, zoom=1.0)
+            oi = OutlineItem(text, page - 1, "XYZ", top=page_height - rect.y0, zoom=1.0)
             outline_hirachy[level] = oi
             if level == 0:
                 outline.root.append(oi)
@@ -62,7 +55,7 @@ def add_bookmarks(headers):
 
 def create_pdf():
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch()
+        browser = playwright.chromium.launch(headless=False)
         page = browser.new_page()
         ki_file = os.path.join(os.getcwd(), "Künstliche_Intelligenz.html")
         page.goto(ki_file, wait_until="networkidle")
@@ -70,8 +63,8 @@ def create_pdf():
         abb_keywords = page.evaluate("abbKeywords")
         header_keywords = page.evaluate("headerKeywords")
         page.pdf(path="temp.pdf", format="A4")
-        abbs = extract_headers(abb_keywords)
-        headers = extract_headers(header_keywords)
+        abbs = extract_keywords(abb_keywords)
+        headers = extract_keywords(header_keywords)
         page.evaluate("generateAbb", abbs)
         page.evaluate("generateTOC", headers)
         page.pdf(path="temp.pdf", format="A4")
@@ -79,6 +72,3 @@ def create_pdf():
 
     add_bookmarks(headers)
     os.remove("temp.pdf")
-
-
-# create_pdf()

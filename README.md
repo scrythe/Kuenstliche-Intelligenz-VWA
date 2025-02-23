@@ -15,7 +15,7 @@ jupyter nbconvert --to html --template .\scrythe.tpl .\Künstliche_Intelligenz.i
 
 # Convert to Markdown with no pictures
 
-jupyter nbconvert --to markdown .\Künstliche_Intelligenz.ipynb
+jupyter nbconvert --to markdown --template .\no_images.tpl .\Künstliche_Intelligenz.ipynb
 
 # My Binder
 

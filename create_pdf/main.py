@@ -55,7 +55,7 @@ def add_bookmarks(headers):
 
 def create_pdf():
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=False)
+        browser = playwright.chromium.launch()
         page = browser.new_page()
         ki_file = os.path.join(os.getcwd(), "Künstliche_Intelligenz.html")
         page.goto(ki_file, wait_until="networkidle")

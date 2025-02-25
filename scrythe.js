@@ -25,6 +25,7 @@ function addNumberToHeaders() {
   h1_number = 0;
   h2_number = 0;
   h3_number = 0;
+  h4_number = 0;
   document.querySelectorAll('.jp-RenderedMarkdown').forEach((cell) => {
     h1 = cell.querySelector('h1');
     if (h1) {
@@ -34,6 +35,7 @@ function addNumberToHeaders() {
       h1_number += 1;
       h2_number = 0;
       h3_number = 0;
+      h4_number = 0;
       h1.innerHTML = `${h1_number} ${h1.innerText}`;
     }
 
@@ -41,13 +43,21 @@ function addNumberToHeaders() {
     if (h2) {
       h2_number += 1;
       h3_number = 0;
+      h4_number = 0;
       h2.innerHTML = `${h1_number}.${h2_number} ${h2.innerText}`;
     }
 
     h3 = cell.querySelector('h3');
     if (h3) {
       h3_number += 1;
+      h4_number = 0;
       h3.innerHTML = `${h1_number}.${h2_number}.${h3_number} ${h3.innerText}`;
+    }
+
+    h4 = cell.querySelector('h4');
+    if (h4) {
+      h4_number += 1;
+      h4.innerHTML = `${h1_number}.${h2_number}.${h3_number}.${h4_number} ${h4.innerText}`;
     }
   });
 }
@@ -103,7 +113,7 @@ function generateTOC(toc = []) {
   tocTitle.innerHTML = 'Inhaltsverzeichnis';
   tocElement.append(tocTitle);
 
-  const headings = Array.from(document.querySelectorAll('h1, h2, h3'));
+  const headings = Array.from(document.querySelectorAll('h1, h2, h3, h4'));
   headings.splice(1, 1);
   const headerKeywords = headings.map((heading) => heading.innerText);
   headings.forEach((heading, index) => {
@@ -153,3 +163,14 @@ addNumberToHeaders();
 
 const abbKeywords = generateAbb();
 const headerKeywords = generateTOC();
+
+function show_just_code() {
+  document.querySelectorAll('.jp-RenderedMarkdown').forEach((cell) => {
+    cell.remove();
+  });
+  document.querySelectorAll('.jp-RenderedHTML').forEach((cell) => {
+    cell.remove();
+  });
+}
+
+// show_just_code(); # I used that for checking for at errors

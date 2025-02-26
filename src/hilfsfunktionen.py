@@ -23,5 +23,5 @@ def erstelle_bild(bild, breite, label, name=None, year=None):
             <figcaption id="{zitierungs_id}" >{zitierung}</figcaption>
         </figure>
         """
-    display(HTML(html))
     number += 1
+    return html

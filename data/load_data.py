@@ -13,7 +13,9 @@ def load_images(datei):
         # Lesen der Bilddaten
         # Pixelwerte sind von 0 bis 255 als unsigned Byte gespeichert
         bilder_daten = f.read()
-        bilder = np.frombuffer(bilder_daten, dtype=np.uint8).reshape(784, anzahl_bilder)
+        bilder = (
+            np.frombuffer(bilder_daten, dtype=np.uint8).reshape(anzahl_bilder, 784).T
+        )
         bilder = (
             bilder.reshape(bilder.shape[0], -1).astype(np.float32) - 127.5
         ) / 127.5  # Zwischen -1 und 1

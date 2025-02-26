@@ -73,13 +73,9 @@ function replaceEnQuotesToGerman() {
 
 function generateAbb(abb_advanced = []) {
   const abbElement = document.querySelector('#abb');
+  abbTitle = document.querySelector('#Abbildungsverzeichnis');
   abbElement.innerHTML = '';
-  const abbTitle = document.createElement('h1');
-  const h1s = document.querySelectorAll('h1');
-  const lastH1 = h1s[h1s.length - 1];
-  const lastH1Number = lastH1.innerText.split(' ')[0];
-  abbTitle.innerHTML = parseInt(lastH1Number) + 1 + ' Abbildungsverzeichnis';
-  abbTitle.id = 'Abbildungsverzeichnis';
+  console.log(abbTitle);
   abbElement.append(abbTitle);
 
   const abbs = Array.from(document.querySelectorAll('figcaption'));

@@ -79,9 +79,16 @@ figure {
 }
 
 @media print {
+  #Titelblatt {
+    page-break-after: always;
+  }
   .jp-Cell-inputWrapper,
   .jp-Cell-outputWrapper {
     break-inside: avoid-page;
+  }
+  .celltag_skip-export .jp-OutputArea-child,
+  .celltag_skip-export .jp-Cell-outputWrapper {
+    break-inside: auto;
   }
 
   h1 {

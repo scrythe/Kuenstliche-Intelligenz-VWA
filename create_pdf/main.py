@@ -4,11 +4,11 @@ from pikepdf import Pdf, OutlineItem
 import os
 
 
-def extract_keywords(keywords):
+def extract_keywords(file, keywords):
     results = []
 
     current_keyword_index = 0
-    doc = pymupdf.open("temp.pdf")
+    doc = pymupdf.open(file)
     for page in doc:
         while True:
             if current_keyword_index >= len(keywords):
@@ -25,13 +25,28 @@ def extract_keywords(keywords):
     return results
 
 
-def add_bookmarks(headers):
-    doc = pymupdf.open("temp.pdf")
+def merge_pdf_cover(file, export):
+    pdf = Pdf.open(file)
+    src = Pdf.open("VWA-Titelblatt.pdf")
+    del pdf.pages[0]
+    pdf.pages.insert(0, src.pages[0])
+    pdf.save(export)
+
+
+def merge_pdf_unterschrift(file, export):
+    pdf = Pdf.open(file)
+    src = Pdf.open("Selbstständigkeitserklärung.pdf")
+    pdf.pages.extend(src.pages)
+    pdf.save(export)
+
+
+def add_bookmarks(file, headers):
+    doc = pymupdf.open(file)
     page = doc.load_page(0)
     page_height = page.rect.height
     doc.close()
 
-    pdf = Pdf.open("temp.pdf")
+    pdf = Pdf.open(file)
     with pdf.open_outline() as outline:
         outline_hirachy = {}
         for header in headers:
@@ -63,12 +78,18 @@ def create_pdf():
         abb_keywords = page.evaluate("abbKeywords")
         header_keywords = page.evaluate("headerKeywords")
         page.pdf(path="temp.pdf", format="A4")
-        abbs = extract_keywords(abb_keywords)
-        headers = extract_keywords(header_keywords)
+        merge_pdf_cover("temp.pdf", "temp_cover.pdf")
+        abbs = extract_keywords("temp_cover.pdf", abb_keywords)
+        headers = extract_keywords("temp_cover.pdf", header_keywords)
         page.evaluate("generateAbb", abbs)
         page.evaluate("generateTOC", headers)
         page.pdf(path="temp.pdf", format="A4")
         browser.close()
+        merge_pdf_cover("temp.pdf", "temp_cover.pdf")
+        merge_pdf_unterschrift("temp_cover.pdf", "temp_unterschrift.pdf")
 
-    add_bookmarks(headers)
+    add_bookmarks("temp_unterschrift.pdf", headers)
+
     os.remove("temp.pdf")
+    os.remove("temp_cover.pdf")
+    os.remove("temp_unterschrift.pdf")

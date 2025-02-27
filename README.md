@@ -21,6 +21,12 @@ jupyter nbconvert --to markdown --template .\no_images.tpl .\Künstliche_Intelli
 
 https://mybinder.org/v2/gh/scrythe/Kuenstliche-Intelligenz-VWA/main?urlpath=%2Fdoc%2Ftree%2FK%C3%BCnstliche_Intelligenz.ipynb
 
+# Run Notebook locally with jupyter lab
+
+pip install jupyterlab
+jupyter lab
+
 # Convert notebook to pdf
 
+pip install playwright pymupdf pikepdf
 python create_html_and_pdf

@@ -170,3 +170,16 @@ function show_just_code() {
 }
 
 // show_just_code(); # I used that for checking for at errors
+
+function only_citations() {
+  const cells = document.querySelectorAll('.jp-Cell');
+  cells.forEach((cell) => {
+    const containsVgl = cell.innerText.includes('vgl.');
+    const containsEbd = cell.innerText.includes('ebd.');
+    const containsCite = containsVgl || containsEbd;
+
+    if (containsCite) cell.remove();
+  });
+}
+
+// only_citations();
